@@ -54,9 +54,9 @@ winston.info("mongoPort=" + mongoPort);
 winston.info("mongoDatabas=" + mongoDatabase);
 winston.info("mongoURL=" + mongoURL);
 
-if ( process.env.LOCAL_SERVER = 'PFC') {
-  mongoURL = "mongodb://localhost/dgidgital"
-}
+//if ( process.env.LOCAL_SERVER == 'PFC') {
+//  mongoURL = "mongodb://localhost/dgidgital"
+//}
 winston.info("BIS mongoURL=" + mongoURL);
 
 // MongoDB
