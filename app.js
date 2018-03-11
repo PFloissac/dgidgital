@@ -47,7 +47,7 @@ console.log("mongoHost=" + mongoHost);
 console.log("mongoPort=" + mongoPort);
 console.log("mongoDatabas=" + mongoDatabase);
 console.log("mongoURL=" + mongoURL);
-
+ 
 if ( process.env.LOCAL_SERVER = 'PFC') {
   mongoURL = "mongodb://localhost/dgidgital"
 }
