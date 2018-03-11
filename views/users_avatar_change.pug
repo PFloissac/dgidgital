@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1 #{title}
+  form(method='POST', action='/users/' +user.userId + '/avatar/change' id='AvatarForm' enctype='multipart/form-data')
+    #form-group
+      label Fichier:
+      input.form-control(name='fileUpload', type='file' id="AvatarForm_fileUpload")
+    br
+    input.btn.btn-primary(type='submit', value='Uploader l\'avatar')

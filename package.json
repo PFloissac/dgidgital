@@ -1,0 +1,33 @@
+{
+  "name": "dgidgital",
+  "version": "1.0.0",
+  "description": "GPR s'en va",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app"
+  },
+  "author": "PFC",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.6.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "bootstrap": "^4.0.0",
+    "busboy": "^0.2.14",
+    "connect-flash": "^0.1.1",
+    "crypto-js": "^3.1.9-1",
+    "date-and-time": "^0.6.2",
+    "express": "^4.16.2",
+    "express-fileupload": "^0.4.0",
+    "express-messages": "^1.0.1",
+    "express-session": "^1.15.6",
+    "express-validator": "^5.0.3",
+    "jquery": "^3.3.1",
+    "mongo-morgan-ext": "^1.0.2",
+    "mongoose": "^5.0.8",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "popper.js": "^1.12.9",
+    "pug": "^2.0.0-rc.4"
+  }
+}

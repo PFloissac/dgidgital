@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  #login-debut-content 
+    h1 Dgidgitalisez !
+    form(method='POST', action='/posts/add' id='PostForm')
+      #form-group
+        label Votre texte:
+        textarea.form-control(name='content')
+      br
+      input.btn.btn-primary(type='submit', value='Envoyer')

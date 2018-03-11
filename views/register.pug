@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  #register-debut-content
+    h1 Enregistrez vous
+    form(method='POST', action='/register' id='RegisterForm')
+      #form-group
+        label Le mot magique (reçu par mail) :
+        input.form-control(name='magic', type='text' id="RegisterForm_magic" value=magic)
+      br
+      hr
+      br
+      #form-group
+        label Identifiant :
+        input.form-control(name='userId', type='text' id="RegisterForm_userId" value=userId)
+      #form-group
+        label nom/prénom :
+        input.form-control(name='userName', type='text' id="RegisterForm_userName" value=userName)
+      #form-group
+        label Email :
+        input.form-control(name='email', type='text' id="RegisterForm_email" value=email)
+      #form-group
+        label Mot de passe :
+        input.form-control(name='password', type='password' id="RegisterForm_password")
+      #form-group
+        label Confirmez votre mot de passe :
+        input.form-control(name='password2', type='password' id="RegisterForm_password2")
+      #form-group
+        label Décrivez vous:
+        textarea.form-control(name='description')= description
+      input.form-control(name='encPassword', type='hidden' value='' id="RegisterForm_encPassword")
+      input.form-control(name='encPassword2', type='hidden' value='' id="RegisterForm_encPassword2")
+      br
+      input.btn.btn-primary(type='submit', value='Créer le compte')

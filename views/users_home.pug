@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  main(role='main')
+    if targetUser
+      // Main jumbotron for a primary marketing message or call to action
+      .jumbotron
+        .papa-avatar-container
+          img.papa-avatar(src='/users/' + targetUser.userId + '/avatar')
+      .container
+        .row
+          .col-2
+            div 
+              // ici bientôt peut-être quelque chose
+          .col-8.dgidgitalisation-liste
+            if posts
+              for  post, i in posts
+                .dgidgitalisation
+                  a(href='/users/' + targetUser.userId)
+                    img.bebe-avatar(src='/users/' + targetUser.userId + '/avatar')
+                    span #{targetUser.userName}
+                  .dgidgitalisation-contenu
+                    div #{targetUser.contenu}
+        hr

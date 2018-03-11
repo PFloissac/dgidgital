@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  #login-debut-content
+    if logs
+      for log, i in logs
+        .row
+          .col #{log.dt} 
+          .col #{log.userId} 
+          .col #{log.url}
+          .col #{log.ip}

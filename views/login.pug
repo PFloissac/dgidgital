@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  #login-debut-content 
+    h1 Identifiez-vous
+    form(method='POST', action='/login' id='LoginForm')
+      #form-group
+        label Identifiant:
+        input.form-control(name='userId', type='text' id="LoginForm_userId")
+      #form-group
+        label Mot de passe:
+        input.form-control(name='password', type='password' id="LoginForm_password")
+      input.form-control(name='encPassword', type='hidden' value='' id="LoginForm_encPassword")
+      br
+      input.btn.btn-primary(type='submit', value='S\'identifier')
