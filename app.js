@@ -193,9 +193,8 @@ app.get('/a_propos_de_lui', function(req, res) {
   });
 });
 
-app.get('/test/:page', function(req, res) {
-  var path = "test/" + req.params.page;
-  res.render(path);
+app.get('/pagecount', function(req, res) {
+  res.send('COUCOU');
 });
 
 app.get('/login_register', function(req, res) {
