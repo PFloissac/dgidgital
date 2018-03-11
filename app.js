@@ -146,7 +146,7 @@ app.get('*', function(req, res, next) {
   //winston.info('');
   //winston.info('suspect [1] next=' + typeof next  + "req.next=" + typeof req.next);
   var url = req.url || "";
-  if (url.indexOf('/avatar') !== -1) {
+  if ((url == '/pagecount') || (url.indexOf('/avatar') !== -1)) {
     next();
   } else {
     var userId = "";
