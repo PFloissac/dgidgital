@@ -47,7 +47,7 @@ console.log("mongoHost=" + mongoHost);
 console.log("mongoPort=" + mongoPort);
 console.log("mongoDatabas=" + mongoDatabase);
 console.log("mongoURL=" + mongoURL);
- 
+
 if ( process.env.LOCAL_SERVER = 'PFC') {
   mongoURL = "mongodb://localhost/dgidgital"
 }
@@ -384,6 +384,6 @@ app.get('/logout', function(req, res) {
 
 // start server
 // ------------
-app.listen(3000, function() {
+app.listen(port, ip, function() {
   console.log('Serveur started ...');
 });
