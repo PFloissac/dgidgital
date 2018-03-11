@@ -2,6 +2,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/user');
 const config = require('../config/database');
 const CryptoJS = require('crypto-js');
+const winston = require('winston');
 
 module.exports = function(passport) {
 
@@ -20,7 +21,7 @@ module.exports = function(passport) {
       // pas vides.
       function(userId, encPassword, done) {
 
-        //console.log('Passport - stratégie locale userId=' + userId + ", encPassword=" + encPassword);
+        //winston.info('Passport - stratégie locale userId=' + userId + ", encPassword=" + encPassword);
 
         // on tente de trouver l'utilisateur dans MongoDB
         var query = {userId:userId};
@@ -29,17 +30,17 @@ module.exports = function(passport) {
             throw err;
 
           } else if (!user) {
-            //console.log('Utilisateur non trouvé - userId=' + userId);
+            //winston.info('Utilisateur non trouvé - userId=' + userId);
             return done(null, false, {message:'Utilisateur non trouvé'});
           }
 
           var d1 = CryptoJS.AES.decrypt(user.encPassword, userId).toString(CryptoJS.enc.Utf8);
           var d2 = CryptoJS.AES.decrypt(encPassword, userId).toString(CryptoJS.enc.Utf8);
           if (d1 == d2) {
-            //console.log('ET LE USER EST ... %j', user);
+            //winston.info('ET LE USER EST ... %j', user);
             return done(null, user);
           } else {
-            //console.log('Mot de passe erroné d2=' + d2);
+            //winston.info('Mot de passe erroné d2=' + d2);
             return done(null, false, {message:'Mot de passe erroné'});
           }
         });

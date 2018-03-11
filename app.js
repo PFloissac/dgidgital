@@ -14,14 +14,20 @@ const fileUpload = require('express-fileupload');
 const dateAndTime = require('date-and-time');
 //const async = require('async');
 
+const winston = require('winston');
+const files = new winston.transports.File({ filename: 'combined.log' });
+const console = new winston.transports.Console();
+winston.add(console);
+winston.add(files);
+
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
     mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
     mongoURLLabel = "";
 
-console.log("port=" + port);
-console.log("ip=" + ip);
-console.log("mongoURL=" + mongoURL);
+winston.info("port=" + port);
+winston.info("ip=" + ip);
+winston.info("mongoURL=" + mongoURL);
 
 if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
   var mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
@@ -43,25 +49,25 @@ if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
   }
 }
 
-console.log("mongoHost=" + mongoHost);
-console.log("mongoPort=" + mongoPort);
-console.log("mongoDatabas=" + mongoDatabase);
-console.log("mongoURL=" + mongoURL);
+winston.info("mongoHost=" + mongoHost);
+winston.info("mongoPort=" + mongoPort);
+winston.info("mongoDatabas=" + mongoDatabase);
+winston.info("mongoURL=" + mongoURL);
 
 if ( process.env.LOCAL_SERVER = 'PFC') {
   mongoURL = "mongodb://localhost/dgidgital"
 }
-console.log("BIS mongoURL=" + mongoURL);
+winston.info("BIS mongoURL=" + mongoURL);
 
 // MongoDB
 // -------
 mongoose.connect(mongoURL); //'mongodb://localhost/dgidgital'
 var db = mongoose.connection;
 db.once('open', function() {
-  console.log('Connecté à MongoDB');
+  winston.info('Connecté à MongoDB');
 });
 db.on('error', function(err) {
-  console.log(err);
+  winston.info(err);
 });
 
 // initialisation de l'appli
@@ -127,18 +133,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('*', function(req, res, next) {
-  //console.log('');
-  //console.log('');
-  //console.log('>> DEBUG passage dans get *');
-  //console.log('>> res.req');
-  //console.log(res.req);
+  //winston.info('');
+  //winston.info('');
+  //winston.info('>> DEBUG passage dans get *');
+  //winston.info('>> res.req');
+  //winston.info(res.req);
   res.locals.user = req.user || null;
   next();
 });
 
 app.get('*', function(req, res, next) {
-  //console.log('');
-  //console.log('suspect [1] next=' + typeof next  + "req.next=" + typeof req.next);
+  //winston.info('');
+  //winston.info('suspect [1] next=' + typeof next  + "req.next=" + typeof req.next);
   var url = req.url || "";
   if (url.indexOf('/avatar') !== -1) {
     next();
@@ -156,19 +162,19 @@ app.get('*', function(req, res, next) {
     };
     var newLog = new Log(l);
 
-    //console.log(l);
-    //console.log("[log] userId=" + userId  + ", url=" + req.url + ", ip=" + req.connection.remoteAddress);
+    //winston.info(l);
+    //winston.info("[log] userId=" + userId  + ", url=" + req.url + ", ip=" + req.connection.remoteAddress);
     newLog.save(function(err) {
-      //console.log('suspect [2] next=' + typeof next  + "req.next=" + typeof req.next);
+      //winston.info('suspect [2] next=' + typeof next  + "req.next=" + typeof req.next);
       if(err){
-        //console.log(l);
-        //console.log("Erreur à la sauvegarde de l\'avatar userId=" + userId + " : " + err);
+        //winston.info(l);
+        //winston.info("Erreur à la sauvegarde de l\'avatar userId=" + userId + " : " + err);
         next();
       } else {
         next();
       }
     });
-    //console.log('suspect [3] next=' + typeof next  + "req.next=" + typeof req.next);
+    //winston.info('suspect [3] next=' + typeof next  + "req.next=" + typeof req.next);
   }
 });
 
@@ -204,7 +210,7 @@ app.get('/posts/add', function(req, res) {
 
 app.post('/posts/add', function(req, res) {
   var user = req.user;
-  //console.log(user);
+  //winston.info(user);
 
   if (!user) {
     res.redirect('/');
@@ -217,7 +223,7 @@ app.post('/posts/add', function(req, res) {
 
   newPost.save(function(err){
     if (err){
-      console.log(err);
+      winston.info(err);
       return;
     } else {
       res.redirect('/users/' + user.userId);
@@ -226,12 +232,12 @@ app.post('/posts/add', function(req, res) {
 });
 
 app.get('/auth', passport.authenticate('local'), function(req, res){
-  console.log("passport user", req.user);
+  winston.info("passport user", req.user);
 });
 
 /*
 app.use(function printSession(req, res, next) {
-  console.log('[printSession] req.session', req.session);
+  winston.info('[printSession] req.session', req.session);
   return next();
 });
 */
@@ -261,8 +267,8 @@ app.post('/register', function(req, res) {
 
   var d1 = CryptoJS.AES.decrypt(encPassword, userId).toString(CryptoJS.enc.Utf8);
   var d2 = CryptoJS.AES.decrypt(encPassword2, userId).toString(CryptoJS.enc.Utf8);
-  console.log('d1=' + d1 + " " + encPassword);
-  console.log('d2=' + d2 + " " + encPassword2);
+  winston.info('d1=' + d1 + " " + encPassword);
+  winston.info('d2=' + d2 + " " + encPassword2);
 
   // vérification dez champs
   req.checkBody('magic', 'Le mot magique est obligatoire').trim().equals('stp');
@@ -308,7 +314,7 @@ app.post('/register', function(req, res) {
             description:description
           });
         } else {
-          console.log("Création de l\'utilisateur " + userId);
+          winston.info("Création de l\'utilisateur " + userId);
 
           var newUser = new User({
             _id: new mongoose.Types.ObjectId(),
@@ -322,7 +328,7 @@ app.post('/register', function(req, res) {
 
           newUser.save(function(err){
             if(err){
-              console.log("Erreur à la création de l\'utilisateur " + userId + " : " + err);
+              winston.info("Erreur à la création de l\'utilisateur " + userId + " : " + err);
               res.render('register', {
                 errors : [{location:"body", param:"userId", msg:"Une erreur s'est produite : " + err}],
                 magic:magic,
@@ -385,5 +391,5 @@ app.get('/logout', function(req, res) {
 // start server
 // ------------
 app.listen(port, ip, function() {
-  console.log('Serveur started ...');
+  winston.info('Serveur started ...');
 });

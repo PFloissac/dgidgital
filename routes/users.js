@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const fs = require('fs');
 const mongoose = require('mongoose');
+const winston = require('winston');
 
 // Modèle
 // ------
@@ -15,8 +16,8 @@ router.get('/', function(req, res) {
   var targetUserId = req.params.targetUserId;
 
   User.find(function(err, allUsers) {
-    //console.log("allUsers");
-    //console.log(allUsers);
+    //winston.info("allUsers");
+    //winston.info(allUsers);
     var errors = null;
     if (err) {
       errors = [{location:"body", param:"body", msg:err}]
@@ -51,17 +52,17 @@ router.get('/:targetUserId/avatar', function(req, res) {
   var query = {userId:targetUserId}
   Avatar.findOne(query, function(err, avatar) {
     if (err) {
-      console.log("err=" + err);
+      winston.info("err=" + err);
       res.status(500);
       return;
     } else {
       if (avatar) {
-        //console.log("TROUVE !!!!");
-        //console.log(avatar);
+        //winston.info("TROUVE !!!!");
+        //winston.info(avatar);
         res.contentType("image/jpeg"); //avatar.contentType
         res.send(avatar.image);
       } else {
-        //console.log("avatar non trouvé");
+        //winston.info("avatar non trouvé");
         res.redirect("/img/no_avatar.jpg");
       }
     }
@@ -71,8 +72,8 @@ router.get('/:targetUserId/avatar', function(req, res) {
 router.post('/:targetUserId/avatar/change', function(req, res) {
   var targetUserId = req.params.targetUserId;
   if (req.user && (req.user.userId == targetUserId)) {
-    //console.log("upload DEB");
-    //console.log(req.files.fileUpload);
+    //winston.info("upload DEB");
+    //winston.info(req.files.fileUpload);
 
     var err = null;
     if (!req.files.fileUpload) {
@@ -84,7 +85,7 @@ router.post('/:targetUserId/avatar/change', function(req, res) {
     }
 
     if (err != null) {
-      //console.log(">> ERREUR = " + err);
+      //winston.info(">> ERREUR = " + err);
       req.flash('success', err);
       res.redirect('/users/' + targetUserId);
       return;
@@ -110,7 +111,7 @@ router.post('/:targetUserId/avatar/change', function(req, res) {
 
         avatar.save(function(err) {
           if(err){
-            console.log("Erreur à la sauvegarde de l\'avatar userId=" + userId + " : " + err);
+            winston.info("Erreur à la sauvegarde de l\'avatar userId=" + userId + " : " + err);
             res.redirect('/users/' + targetUserId);
             return;
           } else {
@@ -143,14 +144,14 @@ router.get('/:targetUserId', function(req, res, next) {
   var targetUserId = req.params.targetUserId;
   var title = "Home, sweet home";
   var queryUser = {userId:targetUserId}
-  //console.log(">> [1] ICI req.next=" + typeof req.next);
+  //winston.info(">> [1] ICI req.next=" + typeof req.next);
 
   User.
   findOne(queryUser).
   populate('posts').
   exec(function (err, targetUser) {
     if (err) {
-      console.log(">> [2] ERR req.next=" + typeof req.next);
+      winston.info(">> [2] ERR req.next=" + typeof req.next);
       res.render('users_home', {
         errors : [{location:"body", param:"targetUserId", msg:"Une erreur est produite lors de la recherche d\'un utilisateur existant : " + err}],
         posts:null,
@@ -165,8 +166,8 @@ router.get('/:targetUserId', function(req, res, next) {
           user:user
         });
       } else {
-        //console.log("targetUser.posts-------------------");
-        //console.log(targetUser.posts);
+        //winston.info("targetUser.posts-------------------");
+        //winston.info(targetUser.posts);
         res.render('users_home', {
           posts:targetUser.posts,
           targetUser:targetUser,
@@ -182,10 +183,10 @@ router.get('/A_DETRUIRE/:targetUserId', function(req, res, next) {
   var targetUserId = req.params.targetUserId;
   var title = "Home, sweet home";
   var queryUser = {userId:targetUserId}
-  console.log(">> [1] ICI req.next=" + typeof req.next);
+  winston.info(">> [1] ICI req.next=" + typeof req.next);
   User.findOne(queryUser, function(err, targetUser, next) {
     if (err) {
-      console.log(">> [2] ERR req.next=" + typeof req.next);
+      winston.info(">> [2] ERR req.next=" + typeof req.next);
       res.render('users_home', {
         errors : [{location:"body", param:"targetUserId", msg:"Une erreur est produite lors de la recherche d\'un utilisateur existant : " + err}],
         posts:null,
@@ -193,13 +194,13 @@ router.get('/A_DETRUIRE/:targetUserId', function(req, res, next) {
         user:user
       });
     } else {
-      console.log(">> [2] PAS ERR req.next=" + typeof req.next);
+      winston.info(">> [2] PAS ERR req.next=" + typeof req.next);
       if (targetUser) {
-        console.log(">> [3] recherche Post  req.next=" + typeof req.next);
+        winston.info(">> [3] recherche Post  req.next=" + typeof req.next);
         var queryPosts = {userId:targetUserId}
         Post.find(queryPosts, function(err, posts, next) {
           if (err) {
-            console.log(">> [4] ERR req.next=" + typeof req.next);
+            winston.info(">> [4] ERR req.next=" + typeof req.next);
             res.render('users_home', {
               errors : [{location:"body", param:"targetUserId", msg:"Une erreur est produite lors de la recherche des posts de l'utilisateur : " + err}],
               posts:null,
@@ -207,7 +208,7 @@ router.get('/A_DETRUIRE/:targetUserId', function(req, res, next) {
               user:user
             });
           } else {
-            console.log(">> [5] OK req.next=" + typeof req.next);
+            winston.info(">> [5] OK req.next=" + typeof req.next);
             if (posts) {
               res.render('users_home', {
                 posts:posts,
