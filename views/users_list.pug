@@ -1,35 +1,35 @@
 extends layout
 
+
 block title
   title  Les Dgidgitaliseurs - Dgidgi.tal
 
 block content
-  #login-debut-content 
+  #TOTOlogin-debut-content 
     h1 Les Dgidgitaliseurs
-    .album.py-5
-      .container#dgidgitaliseur-liste
-        .row
-          for user,i in allUsers
-            .col-md-4
+    if allUsers
+      .album.py-5
+        .container#dgidgitaliseur-liste
+          .row
+            for user,i in allUsers
+              .carte-dgidgitaliseur.col-sm-6
+                .card
+                  h5.card-header
+                    a(href='/users/' + user.userId)
+                      img.card-img-top.maman-avatar(src='/users/' + user.userId + "/avatar", alt=user.userName)
+                      .carte-dgidgitaliseur-nom #{user.userName}
+                  .card-body.carte-dgidgitaliseur-body
+                    //h5.card-title Special title treatment
+                    p.card-text.carte-dgidgitaliseur-description #{user.description}
+                    //a.btn.btn-primary(href='#') Go somewhere
               //
                 .card.mb-4.box-shadow
-                  img.card-img-top.maman-avatar(src='/users/' + user.userId + "/avatar", alt=user.userName)
+                  a(href='/users/' + user.userId)
+                    img.card-img-top.maman-avatar(src='/users/' + user.userId + "/avatar", alt=user.userName)
                   .card-body
-                    br
-                    br
-                    br
-                    br
+                    p.card-text
+                      | blahblahblahblahblahblahblahblahblahblahblahblahblahbl
                     .d-flex.justify-content-between.align-items-center
-                      .btn-group
-                        button.btn.btn-sm.btn-outline-secondary(type='button', href='/toto') View
-                  small.text-muted  #{user.userName}
-            .card.mb-4.box-shadow
-              a(href='/users/' + user.userId)
-                img.card-img-top.maman-avatar(src='/users/' + user.userId + "/avatar", alt=user.userName)
-              .card-body
-                p.card-text
-                  | blahblahblahblahblahblahblahblahblahblahblahblahblahbl
-                .d-flex.justify-content-between.align-items-center
-                  br
-                  small.text-muted  #{user.userName}
-                    a(href='/users/' + user.userId)
+                      br
+                      small.text-muted  #{user.userName}
+                        a(href='/users/' + user.userId)

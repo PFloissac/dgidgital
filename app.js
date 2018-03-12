@@ -187,6 +187,10 @@ app.get('/', function(req, res) {
   });
 });
 
+app.get('/test/:page', function(req, res) {
+  res.render('test/' +req.params.page );
+});
+
 app.get('/a_propos_de_lui', function(req, res) {
   res.render('a_propos_de_lui', {
     bodyClass: 'a-propos-de-lui-body'
@@ -266,8 +270,6 @@ app.post('/register', function(req, res) {
 
   var d1 = CryptoJS.AES.decrypt(encPassword, userId).toString(CryptoJS.enc.Utf8);
   var d2 = CryptoJS.AES.decrypt(encPassword2, userId).toString(CryptoJS.enc.Utf8);
-  winston.info('d1=' + d1 + " " + encPassword);
-  winston.info('d2=' + d2 + " " + encPassword2);
 
   // vérification dez champs
   req.checkBody('magic', 'Le mot magique est obligatoire').trim().equals('svp');

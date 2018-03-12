@@ -1,3 +1,26 @@
+.carte-dgidgitaliseur {
+  margin-top:20px;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: left;
+}
+.carte-dgidgitaliseur-body {
+  height:7rem;
+}
+.carte-dgidgitaliseur-nom {
+  color: #000;
+  font-weight: bolder;
+  text-align: right;
+}
+.carte-dgidgitaliseur-description {
+  font-size: 1rem;
+  margin-left: 80px;
+  margin-top: -20px;
+}
+
 .alert-error {
     color: #155724;
     background-color: #d4edda;
@@ -149,8 +172,8 @@ body {
   width: 85px;
   height: 85px;
   float: right;
-  margin-top: 3px;
-  margin-left: 8px;
+  margin-top: -10px;
+  margin-left: -8px;
   position: absolute;
 }
 
