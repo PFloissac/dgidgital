@@ -270,7 +270,7 @@ app.post('/register', function(req, res) {
   winston.info('d2=' + d2 + " " + encPassword2);
 
   // vérification dez champs
-  req.checkBody('magic', 'Le mot magique est obligatoire').trim().equals('stp');
+  req.checkBody('magic', 'Le mot magique est obligatoire').trim().equals('svp');
   req.checkBody('userId', 'L\'identifiant doit être au minimum un trigramme. Il peut contenir des caractères minuscules, des chiffres ou _').trim().matches('[a-z][a-z0-9_]{1,}[a-z]');
   req.checkBody('userName', 'Le nom/prénom est obligatoire').trim().notEmpty();
   req.checkBody('email', 'L`\'email est obligatoire (mettez un email où Guillaume peut vous contacter)').trim().notEmpty();

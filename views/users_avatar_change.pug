@@ -1,7 +1,10 @@
 extends layout
 
+block title
+  title Changez d'avatar - Dgidgi.tal
+
 block content
-  h1 #{title}
+  h1 Changez d'avatar
   form(method='POST', action='/users/' +user.userId + '/avatar/change' id='AvatarForm' enctype='multipart/form-data')
     #form-group
       label Fichier:

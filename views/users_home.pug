@@ -1,5 +1,11 @@
 extends layout
 
+block title
+  if targetUser
+    title #{targetUser} - Dgidgi.tal
+  else
+    title ??? - Dgidgi.tal
+    
 block content
   main(role='main')
     if targetUser

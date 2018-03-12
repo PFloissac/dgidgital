@@ -1,8 +1,11 @@
 extends layout
 
+block title
+  title Enregistrez-vous - Dgidgi.tal
+
 block content
   #register-debut-content
-    h1 Enregistrez vous
+    h1 Enregistrez-vous
     form(method='POST', action='/register' id='RegisterForm')
       #form-group
         label Le mot magique (reçu par mail) :
@@ -32,3 +35,24 @@ block content
       input.form-control(name='encPassword2', type='hidden' value='' id="RegisterForm_encPassword2")
       br
       input.btn.btn-primary(type='submit', value='Créer le compte')
+
+block specific_script
+  script.
+    $(document).ready(function(){
+      if($('#RegisterForm').length == 1) {
+        $('#RegisterForm').submit(function(eventObj) {
+          var userId = $('#RegisterForm_userId').val();
+          var password = $('#RegisterForm_password').val();
+          var password2 = $('#RegisterForm_password2').val();
+    
+          $('#RegisterForm_encPassword').val(CryptoJS.AES.encrypt(password, userId).toString());
+          $('#RegisterForm_encPassword2').val(CryptoJS.AES.encrypt(password2, userId).toString());
+    
+          $('#RegisterForm_password').val('').prop('disabled', true);
+          $('#RegisterForm_password2').val('').prop('disabled', true);
+    
+          return true;
+        });
+      }
+    });
+    

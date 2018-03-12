@@ -1,5 +1,8 @@
 extends layout
 
+block title
+  title Identifiez-vous - Dgidgi.tal
+
 block content
   #login-debut-content 
     h1 Identifiez-vous
@@ -13,3 +16,19 @@ block content
       input.form-control(name='encPassword', type='hidden' value='' id="LoginForm_encPassword")
       br
       input.btn.btn-primary(type='submit', value='S\'identifier')
+
+block specific_script
+  script.
+    $(document).ready(function(){
+      if($('#LoginForm').length == 1) {
+        $('#LoginForm').submit(function(eventObj) {
+          var userId = $('#LoginForm_userId').val();
+          var password = $('#LoginForm_password').val();
+    
+          $('#LoginForm_encPassword').val(CryptoJS.AES.encrypt(password, userId).toString());
+    
+          $('#LoginForm_password').prop('disabled', true);
+          return true;
+        });
+      }
+    });
