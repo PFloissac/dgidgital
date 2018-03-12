@@ -2,7 +2,7 @@ doctype html
 html(class = bodyClass)
   head
     block title
-    link(rel='icon', type='image/png', href='favicon.png?v=1')
+    link(rel='icon', type='image/png', href='/favicon.png?v=1')
     link(rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.min.css' crossorigin='anonymous')
     link(rel='stylesheet' href='/css/dgidgital.css')
   body(class = bodyClass)
@@ -27,8 +27,9 @@ html(class = bodyClass)
               a.nav-link(href='/hashtags') Hashtags
         if user
           ul.navbar-nav.cr-auto
-            li.nav-item
-              a.nav-link(href='/posts/add') Nouveau post
+            //
+              li.nav-item
+                a.nav-link(href='/posts/add') Nouveau post
             li.nav-item
               a.nav-link(href='/users/' +user.userId + '/avatar/change') Avatar
         ul.navbar-nav.ml-auto
