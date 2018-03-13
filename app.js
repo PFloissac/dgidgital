@@ -158,7 +158,7 @@ app.get('*', function(req, res, next) {
       dt : dt,
       userId : userId,
       url : url,
-      ip : req.connection.remoteAddress
+      ip : req.ip
     };
     var newLog = new Log(l);
 
@@ -372,6 +372,8 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', function(req, res, next) {
+  winston.info('DEBUG /login Firefox ');
+  winston.info(req.body);
   var successRedirect = "/users/" + req.body.userId;
   passport.authenticate('local', {
     successRedirect: successRedirect,
