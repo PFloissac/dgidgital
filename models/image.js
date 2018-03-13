@@ -7,7 +7,11 @@ var ImageSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  dgidgitalisationMongoDBId: {
+  postId: {
+    type: String,
+    required: true
+  },
+  date: {
     type: String,
     required: true
   },

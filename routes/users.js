@@ -139,6 +139,48 @@ router.get('/:targetUserId/avatar/change', function(req, res) {
   }
 });
 
+function fillUserWithLastPosts(targetUser) {
+  return new Promise(function (fulfill, reject) {
+    Post.find()
+    .where('userId').equals(targetUser.userId)
+    .limit(50)
+    .sort({ _id: -1 })
+    .exec()
+    .then(lastPosts => {
+      targetUser.posts = lastPosts
+      fulfill(targetUser)
+    })
+    .catch(err => reject(err));
+  });
+}
+
+router.get('/:targetUserId', function(req, res, next) {
+  var user = res.locals.user || {};
+  var targetUserId = req.params.targetUserId;
+
+  var queryUser = {userId:targetUserId}
+  User
+  .findOne(queryUser)
+  .then(targetUser => fillUserWithLastPosts(targetUser))
+  .then(targetUser => {
+    res.render('users_home', {
+      posts:targetUser.posts,
+      targetUser:targetUser,
+      user:user
+    });
+  })
+  .catch((err)=>{
+     req.flash('success','Une erreur s\'est produite : ' + err);
+     res.render('users_home', {
+       posts:null,
+       targetUser:null,
+       user:user
+     });
+  });
+});
+
+/*
+
 router.get('/:targetUserId', function(req, res, next) {
   var user = res.locals.user || {};
   var targetUserId = req.params.targetUserId;
@@ -177,6 +219,7 @@ router.get('/:targetUserId', function(req, res, next) {
     }
   });
 });
+*/
 /*
 router.get('/A_DETRUIRE/:targetUserId', function(req, res, next) {
   var user = res.locals.user || {};

@@ -1,14 +1,73 @@
 extends layout
 
 block title
-  title Dgidgitalisez ! - Dgidgi.tal
+  title A vos claviers - Dgidgi.tal
 
 block content
   #login-debut-content 
-    h1 Dgidgitalisez !
-    form(method='POST', action='/posts/add' id='PostForm')
+    h1 A vos claviers
+    form(method='POST', action='/posts/add' id='PostForm' enctype='multipart/form-data')
       #form-group
-        label Votre texte:
-        textarea.form-control(name='content')
+        div
+          label Votre texte (280 caractères max):
+          span.nb_char_restants#description_nb_char_restants
+        textarea.form-control(name='content' id="PostForm_description")
       br
-      input.btn.btn-primary(type='submit', value='Envoyer')
+      #form-group
+        label Ajoutez éventuellement une image :
+        input.form-control(name='fileUpload', type='file' id="PostForm_fileUpload")
+      br
+      input.btn.btn-primary(type='submit', value='Envoyer' ,maxlength='500')
+    img#image-holder
+
+block specific_script
+  script.
+  
+  
+    $(document).ready(function() {
+      
+      $("#PostForm_fileUpload").on('change', function (ee) {
+
+        if (typeof (FileReader) != "undefined") {
+
+          var image_holder = $("#image-holder");
+          image_holder.empty();
+
+            var f = $(this)[0].files[0];
+            var msg;
+
+            if (f.type != "image/jpeg") {
+              msg = "La maison n'accepte que les images jpeg";
+            } else if (f.size > 400 * 1024) {
+              var fSize = bytesToSize(f.size); 
+              msg = "La taille de votre fichier ("+ fSize + ") est trop grande (max = 400 ko)";
+            }
+
+            if (msg){
+                alert(msg);
+                eee = $("#PostForm_fileUpload");
+                $("#PostForm_fileUpload").val('');
+                return;
+            }  
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("<img />", {
+                    "src": e.target.result,
+                    "class": "thumb-image"
+                }).appendTo(image_holder);
+
+            }
+            image_holder.show();
+            reader.readAsDataURL($(this)[0].files[0]);
+        }
+      });
+      
+      var text_max = 280;
+
+      $('#PostForm_description').keyup(function() {
+        var text_length = $('#PostForm_description').val().length;
+        var text_remaining = text_max - text_length;
+        $('#description_nb_char_restants').html(text_remaining + " restants");
+      });
+    });

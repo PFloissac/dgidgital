@@ -1,0 +1,18 @@
+extends layout
+
+
+block title
+  title  Dernières nouvelles du front - Dgidgi.tal
+
+block content
+  #login-debut-content 
+    h1 Dernières nouvelles du front
+    if lastPosts
+        for  post, i in lastPosts
+          .dgidgitalisation
+            a(href='/users/' + post.userId)
+              img.bebe-avatar(src='/users/' + post.userId + '/avatar')
+              span #{post.userName}
+            .dgidgitalisation-contenu
+              div #{post.content}
+            

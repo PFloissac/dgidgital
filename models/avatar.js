@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 // svhema
 var AvatarSchema = mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
+    _id: mongoose.Schema.Types.ObjectId,
     userId: {
       type: String,
       required: true

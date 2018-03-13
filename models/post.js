@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 // svhema
 var PostSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userId: {
+    type: String,
+    required: true
+  },
   date: {
     type: String,
     required: true
@@ -12,7 +15,7 @@ var PostSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  imageName: {
+  imageId: {
     type: String
   },
   hashtags: {

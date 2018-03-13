@@ -29,8 +29,10 @@ block content
         label Confirmez votre mot de passe :
         input.form-control(name='password2', type='password' id="RegisterForm_password2")
       #form-group
-        label Décrivez vous:
-        textarea.form-control(name='description')= description
+        div
+          label  Décrivez vous (500 caractères max):
+          span.nb_char_restants#description_nb_char_restants
+        textarea.form-control(name='description' ,maxlength='500' id="RegisterForm_description")= description
       input.form-control(name='encPassword', type='hidden' value='' id="RegisterForm_encPassword")
       input.form-control(name='encPassword2', type='hidden' value='' id="RegisterForm_encPassword2")
       br
@@ -38,8 +40,17 @@ block content
 
 block specific_script
   script.
-    $(document).ready(function(){
-      if($('#RegisterForm').length == 1) {
+    $(document).ready(function() {
+      
+      var text_max = 500;
+
+      $('#RegisterForm_description').keyup(function() {
+        var text_length = $('#RegisterForm_description').val().length;
+        var text_remaining = text_max - text_length;
+        $('#description_nb_char_restants').html(text_remaining + " restants");
+      });
+      
+      if ($('#RegisterForm').length == 1) {
         $('#RegisterForm').submit(function(eventObj) {
           var userId = $('#RegisterForm_userId').val();
           var password = $('#RegisterForm_password').val();

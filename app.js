@@ -13,6 +13,7 @@ const fileUpload = require('express-fileupload');
 //const logger = require('mongo-morgan-ext');
 const dateAndTime = require('date-and-time');
 //const async = require('async');
+const Promise = require('promise');
 
 const winston = require('winston');
 const files = new winston.transports.File({ filename: 'combined.log' });
@@ -77,6 +78,7 @@ const app = express();
 // Modèles
 // -------
 var Post = require('./models/post');
+var Image = require('./models/image');
 var User = require('./models/user');
 var Log = require('./models/log');
 
@@ -201,36 +203,162 @@ app.get('/pagecount', function(req, res) {
   res.send('COUCOU');
 });
 
-app.get('/login_register', function(req, res) {
-  res.render('login_register');
+app.get('/ZWH', function(req, res) {
+
+  winston.info('/posts_last DEB');
+  Post.find(function(err, lastPosts) {
+    var errors;
+    if (err) {
+      errors = [{location:"body", param:"body", msg:err}]
+    }
+    res.render('posts_last_pug', {
+      errors : errors,
+      lastPosts : lastPosts
+    });
+  });
+});
+
+function getLastPosts() {
+  return new Promise(function (fulfill, reject) {
+    Post.find()
+    .limit(50)
+    .sort({ _id: -1 })
+    .exec()
+    .then(lastPosts => fulfill(lastPosts))
+    .catch(err => reject(err));
+  });
+}
+
+app.get('/posts_last', function(req, res) {
+
+ getLastPosts()
+  .then(lastPosts => {
+    winston.info('/posts_last AVANT render');
+    res.render('posts_last_pug', {
+      lastPosts : lastPosts
+    });
+  })
+  .catch((err)=>{
+    //winston.info("##### err catchee : " + err);
+    req.flash('success','Une erreur s\'est produite : ' + err);
+    res.render('posts_last_pug');
+  });
+});
+
+
+app.get('/posts_last_A_DETRUIRE', function(req, res) {
+  winston.info('/posts_last DEB');
+  Post.find()
+  .limit(50)
+  .sort({ _id: -1 })
+  .exec(function(err, lastPosts) {
+    winston.info('/posts_last DEB exec');
+    if (err) {
+      winston.info('/posts_last err=' + err);
+      errors = [{location:"body", param:"body", msg:err}]
+    }
+    //winston.info('/posts_last posts=' + lastPosts);
+    winston.info('/posts_last AVANT render');
+    res.render('posts_last_pug', {
+      errors : errors,
+      lastPosts : lastPosts
+    });
+    return;
+  });
 });
 
 app.get('/posts/add', function(req, res) {
-  res.render('posts_add', {
-    title: 'Nouvelle dgidgitalisation'
-  })
+  res.render('posts_add');
 });
 
+function saveNewPost(newPost) {
+  //winston.info("newPost - AVANT lancement promise");
+  return new Promise(function (fulfill, reject) {
+    newPost.save(function(err) {
+      //winston.info("newPost -save err=" + err);
+      if (err) {
+        reject(err);
+      } else {
+        fulfill();
+      }
+    });
+  });
+}
+
+function saveNewImage(newImage) {
+  //winston.info("newImage - AVANT lancement promise");
+  return new Promise(function (fulfill, reject) {
+    if (!newImage) {
+      //winston.info("newImage RIEN A FAIRE");
+      fulfill();
+    } else {
+      newImage.save(function(err) {
+        //winston.info("newImage -save err=" + err);
+        if (err) {
+          reject(err);
+        } else {
+          fulfill();
+        }
+      });
+    }
+  });
+}
+
 app.post('/posts/add', function(req, res) {
+  //winston.info("JE PASSE ICI");
   var user = req.user;
-  //winston.info(user);
 
   if (!user) {
+    //winston.info(">>> TEST USER - pas de user");
     res.redirect('/');
+    return;
+  } else {
+    //winston.info(">>> TEST USER - user=" + user);
   }
-  var newPost = new Post();
-  newPost._id = new mongoose.Types.ObjectId(),
-  newPost.user = user._id,
-  newPost.date = dateAndTime.format(new Date(), "YYYY-MM-DD HH:mm:ss");
+
+  //winston.info("files=" + req.files);
+
+  var hasImage = false;
+  if (req.files && req.files.fileUpload && req.files.fileUpload.data) {
+    hasImage = true;
+  }
+  winston.info("hasImage:" + hasImage);
+
+  var now = dateAndTime.format(new Date(), "YYYY-MM-DD HH:mm:ss");
+  var postId = new mongoose.Types.ObjectId();
+
+  var imageId;
+  var newImage;
+
+  if (hasImage) {
+    imageId = new mongoose.Types.ObjectId();
+    var newImage = new Image({
+      _id: imageId,
+      userId: user.userId,
+      postId: postId,
+      date : now
+    });
+    newImage.image = req.files.fileUpload.data;
+  }
+
+  var newPost = new Post({
+    _id: postId,
+    userId: user.userId,
+    imageId: imageId,
+    date : now
+  });
   newPost.content = req.body.content;
 
-  newPost.save(function(err){
-    if (err){
-      winston.info(err);
-      return;
-    } else {
-      res.redirect('/users/' + user.userId);
-    }
+  saveNewPost(newPost)
+  .then(saveNewImage(newImage))
+  .then(()=> {
+    //winston.info("##### OKKKKKK : ");
+    res.redirect('/users/' + user.userId);
+  })
+  .catch((err)=>{
+    //winston.info("##### err catchee : " + err);
+    req.flash('success','Une erreur s\'est produite : ' + err);
+    res.redirect('/users/' + user.userId);
   });
 });
 
@@ -347,6 +475,10 @@ app.post('/register', function(req, res) {
       }
     });
   }
+});
+
+app.get('/admin/debug_routes', function(req, res) {
+  res.send(JSON.stringify(app._router.stack));
 });
 
 app.get('/admin/logs', function(req, res) {
