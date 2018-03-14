@@ -10,26 +10,5 @@ block content
     if lastPosts
       .col-8.dgidgitalisation-liste
         for  post, i in lastPosts
-          .dgidgitalisation
-            a(href='/users/' + post.userId)
-              img.bebe-avatar(src='/users/' + post.userId + '/avatar')
-              span #{post.userName}
-            .dgidgitalisation-contenu
-              div #{post.content}
-              if post.imageId
-                img.img-fluid(src='/images/' + post.imageId, data-toggle='modal', data-target='#modal_' + post.imageId)
-                .modal.fade(tabindex='-1', role='dialog', id='modal_' + post.imageId)
-                  .modal-dialog.modal-lg(role='document')
-                    .modal-content
-                      .modal-body
-                        button.close(type='button', data-dismiss='modal', aria-label='Close')
-                          span(aria-hidden='true') ×
-                        img#image.img-fluid(src='/images/' + post.imageId, alt='')
-                      .modal-footer
-                        div #{post.content}
-              if post.hashtags
-                div.post-hashtags
-                  for hashtag, i in post.hashtags
-                    span.hashtag-big
-                      a.btn.btn-sm.btn-outline-secondary(href='/hashtags/' + hashtag, role='button') #{hashtag}
+          include dgidgitalisation.pug
             

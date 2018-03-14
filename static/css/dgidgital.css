@@ -145,9 +145,14 @@ body {
 /*
  *
  */
-#dgidgitaliseur-liste {
-
+.carte-dgidgitaliseur-date {
+  float:right;
+  color: #888;
+  font-size: 0.80rem;
 }
+.dgidgitalisation-top-margin {
+   margin-top:10px;
+ }
 .dgidgitaliseur {
   border-bottom-color: rgb(230, 236, 240);
   border-bottom-style: solid;
@@ -161,11 +166,13 @@ body {
 /*
  *
  */
-.dgidgitalisation-liste {
-  background-color: #fff;
+.dgidgitalisation-outer {
   color:#000;
+  background-color:#fff;
+  padding:3px;
+  border-bottom: 5px;
 }
-.dgidgitalisation {
+.dgidgitalisation-inner {
   border-bottom-color: rgb(230, 236, 240);
   border-bottom-style: solid;
   border-bottom-width: 1px;
