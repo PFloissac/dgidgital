@@ -1,0 +1,14 @@
+extends layout
+
+
+block title
+  title  Hashtags - Dgidgi.tal
+
+block content
+  #login-debut-content 
+    h1 Hashtags
+    if hashtags
+      .container-fluid#hashtags-liste 
+          for hashtag,i in hashtags
+            span.hashtag-big
+              a.btn.btn-sm.btn-secondary(href='/hashtags/' + hashtag, role='button') #{hashtag}

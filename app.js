@@ -148,7 +148,7 @@ app.get('*', function(req, res, next) {
   //winston.info('');
   //winston.info('suspect [1] next=' + typeof next  + "req.next=" + typeof req.next);
   var url = req.url || "";
-  if ((url == '/pagecount') || (url.indexOf('/avatar') !== -1)  || (url.indexOf('favicon.png') != -1)) {
+  if ((url == '/pagecount') || (url.indexOf('/avatar') !== -1)  || (url.indexOf('favicon.png') !== -1) || (url.indexOf('images') !== -1)) {
     next();
   } else {
     var userId = "";
@@ -221,11 +221,44 @@ app.get('/ZWH', function(req, res) {
 */
 
 app.get('/hashtags', function(req, res) {
-  res.render('hashtags_list');
+    Post.distinct('hashtags').exec(function (err, hashtags) {
+    if (err) {
+      req.flash('success','Une erreur s\'est produite : ' + err);
+    }
+    //winston.log(">> hashtags:" + hashtags);
+    res.render('hashtags_list', {
+      hashtags:hashtags
+    });
+  });
 });
 
+function getPostsForHashtag(hashtag) {
+  return new Promise(function (fulfill, reject) {
+    Post.find({hashtags:hashtag})
+    .sort({ _id: -1 })
+    .exec()
+    .then(posts => fulfill(posts))
+    .catch(err => reject(err));
+  });
+}
+
 app.get('/hashtags/:hashtag', function(req, res) {
-  res.render('hashtags_home');
+  var hashtag = req.params.hashtag;
+
+  getPostsForHashtag(hashtag)
+    .then(posts => {
+      res.render('hashtags_home', {
+        hashtag: hashtag,
+        posts : posts
+      });
+    })
+    .catch((err)=>{
+      //winston.info("##### err catchee : " + err);
+      req.flash('success','Une erreur s\'est produite : ' + err);
+      res.render('hashtags_home', {
+        hashtag: hashtag
+      });
+    });
 });
 
 function getLastPosts() {
@@ -243,7 +276,7 @@ app.get('/posts_last', function(req, res) {
 
  getLastPosts()
   .then(lastPosts => {
-    winston.info('/posts_last AVANT render');
+    //winston.info('/posts_last AVANT render');
     res.render('posts_last_pug', {
       lastPosts : lastPosts
     });
@@ -319,7 +352,7 @@ function findHashtags(searchText) {
     var regexp = /#\w+/g
     result = searchText.match(regexp);
     if (result) {
-        result = result.map(function(s){ return s.trim().toLowerCase();});
+        result = result.map(function(s){ return s.trim().toLowerCase().substr(1);});
         //winston.info(result);
         return result;
     } else {

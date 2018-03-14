@@ -23,7 +23,7 @@ block content
               for  post, i in posts
                 .dgidgitalisation
                   a(href='/users/' + post.userId)
-                    img.bebe-avatar(src='/users/' + targetUser.userId + '/avatar')
+                    img.bebe-avatar(src='/users/' + post.userId + '/avatar')
                     span #{post.userName}
                   .dgidgitalisation-contenu
                     div #{post.content}

@@ -21,14 +21,13 @@ html(class = bodyClass)
         ul.navbar-nav.mr-auto
           li.nav-item
             a.nav-link(href='/a_propos_de_lui') A propos 
-            li.nav-item
               if user
-                a.nav-link(href='/users') Dgidgi.taliseurs 
-            //
-              li.nav-item
-                a.nav-link(href='/hashtags') Hashtags
+                li.nav-item
+                  a.nav-link(href='/users') Dgidgi.taliseurs 
         if user
           ul.navbar-nav.cr-auto
+            li.nav-item
+              a.nav-link(href='/hashtags') Hashtags
             li.nav-item
               a.nav-link(href='/posts_last') Dgidgi.talisations
             li.nav-item
