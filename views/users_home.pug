@@ -37,5 +37,10 @@ block content
                                 span(aria-hidden='true') ×
                               img#image.img-fluid(src='/images/' + post.imageId, alt='')
                             .modal-footer
-                              div #{post.content}
+                              div.post-content #{post.content}
+                    if post.hashtags
+                      div.post-hashtags
+                        for hashtag, i in post.hashtags
+                          span.hashtag-big
+                            a.btn.btn-sm.btn-outline-secondary(href='/hashtags/' + hashtag, role='button') #{hashtag}
         hr

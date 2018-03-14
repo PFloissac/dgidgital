@@ -32,6 +32,9 @@ var UserSchema = mongoose.Schema({
   avatarContentType: {
     type: String
   },
+  likedBy: {
+     type: [String]
+   },
   posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }]
 });
 

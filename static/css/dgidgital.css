@@ -1,3 +1,8 @@
+.post-hashtags {
+  text-align: right;
+  margin-top:2px;
+  margin-bottom:2px;
+}
 .hashtag-big {
   margin:3px;
 }

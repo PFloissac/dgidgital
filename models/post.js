@@ -18,6 +18,9 @@ var PostSchema = mongoose.Schema({
   imageId: {
     type: String
   },
+  likedBy: {
+     type: [String]
+   },
   hashtags: {
     type: [String]
   }
