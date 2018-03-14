@@ -19,7 +19,7 @@ var PostSchema = mongoose.Schema({
     type: String
   },
   hashtags: {
-    type: String
+    type: [String]
   }
 });
 

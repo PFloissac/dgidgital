@@ -1,3 +1,6 @@
+.modal-dialog-img {
+  .max-width:90%;
+}
 .nb_char_restants {
   color: #aaa;
   margin-left: 5px;
@@ -152,12 +155,14 @@ body {
  */
 .dgidgitalisation-liste {
   background-color: #fff;
+  color:#000;
 }
 .dgidgitalisation {
   border-bottom-color: rgb(230, 236, 240);
   border-bottom-style: solid;
   border-bottom-width: 1px;
   margin-left: 58px;
+  min-height: 80px;
 }
 .dgidgitalisation-contenu {
 }

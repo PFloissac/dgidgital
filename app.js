@@ -203,6 +203,7 @@ app.get('/pagecount', function(req, res) {
   res.send('COUCOU');
 });
 
+/*
 app.get('/ZWH', function(req, res) {
 
   winston.info('/posts_last DEB');
@@ -216,6 +217,15 @@ app.get('/ZWH', function(req, res) {
       lastPosts : lastPosts
     });
   });
+});
+*/
+
+app.get('/hashtags', function(req, res) {
+  res.render('hashtags_list');
+});
+
+app.get('/hashtags/:hashtag', function(req, res) {
+  res.render('hashtags_home');
 });
 
 function getLastPosts() {
@@ -245,25 +255,25 @@ app.get('/posts_last', function(req, res) {
   });
 });
 
+app.get('/images/:imageId', function(req, res) {
+  var imageId = req.params.imageId;
+  res.contentType("image/jpeg"); //avatar.contentType
 
-app.get('/posts_last_A_DETRUIRE', function(req, res) {
-  winston.info('/posts_last DEB');
-  Post.find()
-  .limit(50)
-  .sort({ _id: -1 })
-  .exec(function(err, lastPosts) {
-    winston.info('/posts_last DEB exec');
+  //winston.info("imageId=" + imageId);
+  var query = {_i:new mongoose.Types.ObjectId(imageId)}
+  Image.findById(imageId, function(err, image) {
     if (err) {
-      winston.info('/posts_last err=' + err);
-      errors = [{location:"body", param:"body", msg:err}]
+      winston.info("err=" + err + " pour image " + imageId);
+      res.sendStatus(500);
+    } else {
+      if (image) {
+        //winston.info("TROUVE !!!!");
+        //winston.info(avatar);
+        res.send(image.image);
+      } else {
+        res.sendStatus(404);
+      }
     }
-    //winston.info('/posts_last posts=' + lastPosts);
-    winston.info('/posts_last AVANT render');
-    res.render('posts_last_pug', {
-      errors : errors,
-      lastPosts : lastPosts
-    });
-    return;
   });
 });
 
@@ -302,6 +312,20 @@ function saveNewImage(newImage) {
       });
     }
   });
+}
+
+function findHashtags(searchText) {
+    //winston.info("find dans " + searchText);
+    var regexp = /#\w+/g
+    result = searchText.match(regexp);
+    if (result) {
+        result = result.map(function(s){ return s.trim().toLowerCase();});
+        //winston.info(result);
+        return result;
+    } else {
+        //winston.info("pas result");
+        return [];
+    }
 }
 
 app.post('/posts/add', function(req, res) {
@@ -348,6 +372,11 @@ app.post('/posts/add', function(req, res) {
     date : now
   });
   newPost.content = req.body.content;
+
+  var hashtags = findHashtags(req.body.content);
+  winston.info("hashtags: " + hashtags);
+
+  newPost.hashtags = hashtags;
 
   saveNewPost(newPost)
   .then(saveNewImage(newImage))
