@@ -14,7 +14,7 @@ block content
         textarea.form-control(name='content' id="PostForm_description")
       br
       #form-group
-        label Ajoutez éventuellement une image :
+        label Ajoutez éventuellement une image (max 400 Ko) :
         input.form-control(name='fileUpload', type='file' id="PostForm_fileUpload")
       br
       input.btn.btn-primary(type='submit', value='Envoyer' ,maxlength='500')
@@ -22,8 +22,6 @@ block content
 
 block specific_script
   script.
-  
-  
     $(document).ready(function() {
       
       $("#PostForm_fileUpload").on('change', function (ee) {

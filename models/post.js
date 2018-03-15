@@ -23,7 +23,10 @@ var PostSchema = mongoose.Schema({
    },
   hashtags: {
     type: [String]
-  }
+  },
+ youGuys: {
+   type: [String]
+ }
 });
 
 var Post = module.exports = mongoose.model('Post', PostSchema);

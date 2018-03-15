@@ -6,21 +6,26 @@ block title
 
 block content
   #login-debut-content 
-    h1 Les Dgidgi.taliseurs
-    if allUsers
-      .album
-        .container#dgidgitaliseur-liste 
-          .row
-            for user,i in allUsers
-              .carte-dgidgitaliseur.col-sm-4
-                .card
-                  h5.card-header
-                      a(href='/users/' + user.userId, style='text-decoration: none;')
-                        img.card-img-top.maman-avatar(src='/users/' + user.userId + "/avatar", alt=user.userName)
-                        div.carte-dgidgitaliseur-id-et-nom
-                          .carte-dgidgitaliseur-nom #{user.userName}
-                          .carte-dgidgitaliseur-id @#{user.userId}
-                  .card-body.carte-dgidgitaliseur-body
-                    //h5.card-title Special title treatment
-                    p.card-text.carte-dgidgitaliseur-description #{user.description}
-                    //a.btn.btn-primary(href='#') Go somewhere
+    .container-fluid
+      .row
+        .col-1
+          div 
+        .col-10.dgidgitalisation-liste
+          h1 Les Dgidgi.taliseurs
+          if allUsers
+            .album
+              .container-fluid
+                .row
+                  for user,i in allUsers
+                    .carte-dgidgitaliseur.col-sm-4
+                      .card
+                        h5.card-header
+                            a(href='/users/' + user.userId, style='text-decoration: none;')
+                              img.card-img-top.maman-avatar(src='/users/' + user.userId + "/avatar", alt=user.userName)
+                              div.carte-dgidgitaliseur-id-et-nom
+                                .carte-dgidgitaliseur-nom #{user.userName}
+                                .carte-dgidgitaliseur-id @#{user.userId}
+                        .card-body.carte-dgidgitaliseur-body
+                          //h5.card-title Special title treatment
+                          p.card-text.carte-dgidgitaliseur-description #{user.description}
+                          //a.btn.btn-primary(href='#') Go somewhere

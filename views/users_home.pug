@@ -13,12 +13,12 @@ block content
       .jumbotron
         .papa-avatar-container
           img.papa-avatar(src='/users/' + targetUser.userId + '/avatar')
-      .container
+      .container-fluid
         .row
-          .col-4
+          .col-2
             div 
               // ici bientôt peut-être quelque chose
-          .col-8.dgidgitalisation-liste.p-3
+          .col-9.dgidgitalisation-liste.p-3
             if posts
               for  post, i in posts
                 include dgidgitalisation.pug

@@ -5,10 +5,12 @@ block title
     
 block content
   #login-debut-content 
-    h1 ##{hashtag}
-    .container
+    .container-fluid
       .row
+        .col-2
+          div
         .col-8.dgidgitalisation-liste
+          h1 ##{hashtag}
           if posts
             for  post, i in posts
               include dgidgitalisation.pug

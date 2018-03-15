@@ -4,10 +4,61 @@ block title
   title Changez d'avatar - Dgidgi.tal
 
 block content
-  h1 Changez d'avatar
-  form(method='POST', action='/users/' +user.userId + '/avatar/change' id='AvatarForm' enctype='multipart/form-data')
-    #form-group
-      label Fichier:
-      input.form-control(name='fileUpload', type='file' id="AvatarForm_fileUpload")
+  #login-debut-content 
+    h1 Sélectionnez votre avatar
     br
-    input.btn.btn-primary(type='submit', value='Uploader l\'avatar')
+    div L'image doit être carrée (ou presque), sinon vous allez avoir une drôle de tête.
+    div Vous pouvez utiliser par exemple 
+      a(href='https://imageresize.org/', target='_blank') https://imageresize.org/
+      | pour la préparer (option crop - taille 1:1) 
+
+    br
+    form(method='POST', action='/users/' +user.userId + '/avatar/change' id='AvatarForm' enctype='multipart/form-data')
+      #form-group
+        label Fichier (max 70 Ko) :
+        input.form-control(name='fileUpload', type='file' id="AvatarForm_fileUpload")
+      br
+      input.btn.btn-primary(type='submit', value='Uploader l\'avatar')
+    img#image-holder
+
+block specific_script
+  script.
+    $(document).ready(function() {
+      
+      $("#AvatarForm_fileUpload").on('change', function (ee) {
+
+        if (typeof (FileReader) != "undefined") {
+
+          var image_holder = $("#image-holder");
+          image_holder.empty();
+
+            var f = $(this)[0].files[0];
+            var msg;
+
+            if (f.type != "image/jpeg") {
+              msg = "La maison n'accepte que les images jpeg";
+            } else if (f.size > 70 * 1024) {
+              var fSize = bytesToSize(f.size); 
+              msg = "La taille de votre fichier ("+ fSize + ") est trop grande (max = 70 ko)";
+            }
+
+            if (msg){
+                alert(msg);
+                eee = $("#AvatarForm_fileUpload");
+                $("#AvatarForm_fileUpload").val('');
+                return;
+            }  
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("<img />", {
+                    "src": e.target.result,
+                    "class": "thumb-image"
+                }).appendTo(image_holder);
+
+            }
+            image_holder.show();
+            reader.readAsDataURL($(this)[0].files[0]);
+        }
+      });
+    });

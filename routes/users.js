@@ -13,6 +13,12 @@ var Avatar = require('../models/avatar.js');
 
 
 router.get('/', function(req, res) {
+  var user = req.user;
+  if (!user) {
+    res.redirect('/');
+    return;
+  }
+
   var targetUserId = req.params.targetUserId;
 
   User.find(function(err, allUsers) {
@@ -24,7 +30,8 @@ router.get('/', function(req, res) {
     }
     res.render('users_list', {
       errors : errors,
-      allUsers : allUsers
+      allUsers : allUsers,
+      user : user
     });
   });
 });
@@ -47,6 +54,12 @@ router.get('/exists/:userId', function(req, res) {
 });
 
 router.get('/:targetUserId/avatar', function(req, res) {
+  var user = req.user;
+  if (!user) {
+    res.redirect("/img/no_avatar.jpg");
+    return;
+  }
+
   var targetUserId = req.params.targetUserId;
 
   var query = {userId:targetUserId}
@@ -70,6 +83,12 @@ router.get('/:targetUserId/avatar', function(req, res) {
 });
 
 router.post('/:targetUserId/avatar/change', function(req, res) {
+  var user = req.user;
+  if (!user) {
+    res.redirect('/');
+    return;
+  }
+
   var targetUserId = req.params.targetUserId;
   if (req.user && (req.user.userId == targetUserId)) {
     //winston.info("upload DEB");
@@ -78,8 +97,8 @@ router.post('/:targetUserId/avatar/change', function(req, res) {
     var err = null;
     if (!req.files.fileUpload) {
       err = "Pas de fichier";
-    } else if (req.files.fileUpload.mimetype > 1000) {
-      err = "La taille est trop importante : " + req.files.fileUpload.byteLength;
+    } else if (req.files.fileUpload.byteLength > 70*1024) {
+      err = "La taille est trop importante (70 Ko max): " + req.files.fileUpload.byteLength;
     } else if (req.files.fileUpload.mimetype != 'image/jpeg') {
       err = "Le type de fichier doit être jpeg";
     }
@@ -129,6 +148,12 @@ router.post('/:targetUserId/avatar/change', function(req, res) {
 });
 
 router.get('/:targetUserId/avatar/change', function(req, res) {
+  var user = req.user;
+  if (!user) {
+    res.redirect('/');
+    return;
+  }
+
   var targetUserId = req.params.targetUserId;
   if (req.user && (req.user.userId == targetUserId)) {
     res.render('users_avatar_change',{
@@ -155,7 +180,11 @@ function fillUserWithLastPosts(targetUser) {
 }
 
 router.get('/:targetUserId', function(req, res, next) {
-  var user = res.locals.user || {};
+  var user = req.user;
+  if (!user) {
+    res.redirect('/');
+    return;
+  }
   var targetUserId = req.params.targetUserId;
 
   var queryUser = {userId:targetUserId}
@@ -179,103 +208,4 @@ router.get('/:targetUserId', function(req, res, next) {
   });
 });
 
-/*
-
-router.get('/:targetUserId', function(req, res, next) {
-  var user = res.locals.user || {};
-  var targetUserId = req.params.targetUserId;
-  var title = "Home, sweet home";
-  var queryUser = {userId:targetUserId}
-  //winston.info(">> [1] ICI req.next=" + typeof req.next);
-
-  User.
-  findOne(queryUser).
-  populate('posts').
-  exec(function (err, targetUser) {
-    if (err) {
-      winston.info(">> [2] ERR req.next=" + typeof req.next);
-      res.render('users_home', {
-        errors : [{location:"body", param:"targetUserId", msg:"Une erreur est produite lors de la recherche d\'un utilisateur existant : " + err}],
-        posts:null,
-        targetUser:null,
-        user:user
-      });
-    } else {
-      if (!targetUser) {
-        res.render('users_home', {
-          posts:null,
-          targetUser:null,
-          user:user
-        });
-      } else {
-        //winston.info("targetUser.posts-------------------");
-        //winston.info(targetUser.posts);
-        res.render('users_home', {
-          posts:targetUser.posts,
-          targetUser:targetUser,
-          user:user
-        });
-      }
-    }
-  });
-});
-*/
-/*
-router.get('/A_DETRUIRE/:targetUserId', function(req, res, next) {
-  var user = res.locals.user || {};
-  var targetUserId = req.params.targetUserId;
-  var title = "Home, sweet home";
-  var queryUser = {userId:targetUserId}
-  winston.info(">> [1] ICI req.next=" + typeof req.next);
-  User.findOne(queryUser, function(err, targetUser, next) {
-    if (err) {
-      winston.info(">> [2] ERR req.next=" + typeof req.next);
-      res.render('users_home', {
-        errors : [{location:"body", param:"targetUserId", msg:"Une erreur est produite lors de la recherche d\'un utilisateur existant : " + err}],
-        posts:null,
-        targetUser:null,
-        user:user
-      });
-    } else {
-      winston.info(">> [2] PAS ERR req.next=" + typeof req.next);
-      if (targetUser) {
-        winston.info(">> [3] recherche Post  req.next=" + typeof req.next);
-        var queryPosts = {userId:targetUserId}
-        Post.find(queryPosts, function(err, posts, next) {
-          if (err) {
-            winston.info(">> [4] ERR req.next=" + typeof req.next);
-            res.render('users_home', {
-              errors : [{location:"body", param:"targetUserId", msg:"Une erreur est produite lors de la recherche des posts de l'utilisateur : " + err}],
-              posts:null,
-              targetUser:null,
-              user:user
-            });
-          } else {
-            winston.info(">> [5] OK req.next=" + typeof req.next);
-            if (posts) {
-              res.render('users_home', {
-                posts:posts,
-                targetUser:targetUser,
-                user:user
-              });
-            } else {
-              res.render('users_home', {
-                posts:null,
-                targetUser:null,
-                user:user
-              });
-            }
-          }
-        });
-      } else {
-        // pas de user
-        res.render('users_home', {
-          targetUser:null,
-          user:user
-        });
-      }
-    }
-  });
-});
-*/
 module.exports = router;

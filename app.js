@@ -148,7 +148,7 @@ app.get('*', function(req, res, next) {
   //winston.info('');
   //winston.info('suspect [1] next=' + typeof next  + "req.next=" + typeof req.next);
   var url = req.url || "";
-  if ((url == '/pagecount') || (url.indexOf('/avatar') !== -1)  || (url.indexOf('favicon.png') !== -1) || (url.indexOf('images') !== -1)) {
+  if ((url == '/pagecount') || (url.indexOf('/avatar') !== -1)  || (url.indexOf('favicon') !== -1) || (url.indexOf('images') !== -1)) {
     next();
   } else {
     var userId = "";
@@ -203,25 +203,13 @@ app.get('/pagecount', function(req, res) {
   res.send('COUCOU');
 });
 
-/*
-app.get('/ZWH', function(req, res) {
-
-  winston.info('/posts_last DEB');
-  Post.find(function(err, lastPosts) {
-    var errors;
-    if (err) {
-      errors = [{location:"body", param:"body", msg:err}]
-    }
-    res.render('posts_last_pug', {
-      errors : errors,
-      lastPosts : lastPosts
-    });
-  });
-});
-*/
-
 app.get('/hashtags', function(req, res) {
-    Post.distinct('hashtags').exec(function (err, hashtags) {
+  var user = req.user;
+  if (!user) {
+    res.redirect('/');
+    return;
+  }
+  Post.distinct('hashtags').exec(function (err, hashtags) {
     if (err) {
       req.flash('success','Une erreur s\'est produite : ' + err);
     }
@@ -243,6 +231,12 @@ function getPostsForHashtag(hashtag) {
 }
 
 app.get('/hashtags/:hashtag', function(req, res) {
+  var user = req.user;
+  if (!user) {
+    res.redirect('/');
+    return;
+  }
+
   var hashtag = req.params.hashtag;
 
   getPostsForHashtag(hashtag)
@@ -264,7 +258,7 @@ app.get('/hashtags/:hashtag', function(req, res) {
 function getLastPosts() {
   return new Promise(function (fulfill, reject) {
     Post.find()
-    .limit(50)
+    .limit(120)
     .sort({ _id: -1 })
     .exec()
     .then(lastPosts => fulfill(lastPosts))
@@ -273,6 +267,11 @@ function getLastPosts() {
 }
 
 app.get('/posts_last', function(req, res) {
+  var user = req.user;
+  if (!user) {
+    res.redirect('/');
+    return;
+  }
 
  getLastPosts()
   .then(lastPosts => {
@@ -289,6 +288,12 @@ app.get('/posts_last', function(req, res) {
 });
 
 app.get('/images/:imageId', function(req, res) {
+  var user = req.user;
+  if (!user) {
+    res.sendStatus(500);
+    return;
+  }
+
   var imageId = req.params.imageId;
   res.contentType("image/jpeg"); //avatar.contentType
 
@@ -311,6 +316,11 @@ app.get('/images/:imageId', function(req, res) {
 });
 
 app.get('/posts/add', function(req, res) {
+  var user = req.user;
+  if (!user) {
+    res.redirect('/');
+    return;
+  }
   res.render('posts_add');
 });
 
@@ -347,9 +357,20 @@ function saveNewImage(newImage) {
   });
 }
 
+function findYouGuys(searchText) {
+    var regexp = /@[A-zÀ-ú_-]+/g
+    result = searchText.match(regexp);
+    if (result) {
+        result = result.map(function(s){ return s.trim().toLowerCase().substr(1);});
+        return result;
+    } else {
+        return [];
+    }
+}
+
 function findHashtags(searchText) {
     //winston.info("find dans " + searchText);
-    var regexp = /#\w+/g
+    var regexp = /#[A-zÀ-ú_-]+/g
     result = searchText.match(regexp);
     if (result) {
         result = result.map(function(s){ return s.trim().toLowerCase().substr(1);});
@@ -362,18 +383,11 @@ function findHashtags(searchText) {
 }
 
 app.post('/posts/add', function(req, res) {
-  //winston.info("JE PASSE ICI");
   var user = req.user;
-
   if (!user) {
-    //winston.info(">>> TEST USER - pas de user");
     res.redirect('/');
     return;
-  } else {
-    //winston.info(">>> TEST USER - user=" + user);
   }
-
-  //winston.info("files=" + req.files);
 
   var hasImage = false;
   if (req.files && req.files.fileUpload && req.files.fileUpload.data) {
@@ -407,9 +421,12 @@ app.post('/posts/add', function(req, res) {
   newPost.content = req.body.content;
 
   var hashtags = findHashtags(req.body.content);
-  winston.info("hashtags: " + hashtags);
-
+  //winston.info("hashtags: " + hashtags);
   newPost.hashtags = hashtags;
+
+  var youGuys = findYouGuys(req.body.content);
+  winston.info("youGuys: " + youGuys);
+  newPost.youGuys = youGuys;
 
   saveNewPost(newPost)
   .then(saveNewImage(newImage))

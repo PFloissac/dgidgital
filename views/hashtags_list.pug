@@ -6,9 +6,14 @@ block title
 
 block content
   #login-debut-content 
-    h1 Hashtags
-    if hashtags
-      .container-fluid#hashtags-liste 
-          for hashtag,i in hashtags
-            span.hashtag-big
-              a.btn.btn-sm.btn-secondary(href='/hashtags/' + hashtag, role='button') ##{hashtag}
+    .container-fluid
+      .row
+        .col-1
+          div 
+        .col-10.dgidgitalisation-liste
+          h1 Hashtags
+          if hashtags
+            .container-fluid#hashtags-liste 
+                for hashtag,i in hashtags
+                  span.hashtag-big
+                    a.btn.btn-sm.btn-secondary(href='/hashtags/' + hashtag, role='button') ##{hashtag}

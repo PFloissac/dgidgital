@@ -48,7 +48,7 @@ html(class = bodyClass)
               a.nav-link(href='/register') Nous rejoindre 
     
     block specific_layout
-      .container#au-dessous-de-nav
+      .container-fluid#au-dessous-de-nav
         != messages('message', locals)
         if errors
           each error, i in errors
