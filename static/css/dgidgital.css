@@ -1,3 +1,6 @@
+.in-black {
+  color:#000;
+}
 .form-comment {
   margin-left:15px;
   font-style: italic;
@@ -26,6 +29,7 @@
   line-height: 1.5;
   color: #212529;
   text-align: left;
+  height:200px;
 }
 .carte-dgidgitaliseur-body {
 }
