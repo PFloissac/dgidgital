@@ -9,15 +9,23 @@ block title
 block content
   main(role='main')
     if targetUser
-      // Main jumbotron for a primary marketing message or call to action
       .jumbotron
         .papa-avatar-container
           img.papa-avatar(src='/users/' + targetUser.userId + '/avatar')
       .container-fluid
         .row
-          .col-2
-            div 
-              // ici bientôt peut-être quelque chose
+          .col-3
+            div.presentation
+            .card(style='width: 20rem;')
+              .card-body
+                h5.card-title.presentation-title
+                  .presentation-userName #{targetUser.userName}
+                  .presentation-userId @#{targetUser.userId}
+                  br
+                  .presentation-email #{targetUser.email}
+                br
+                p.card-text
+                  div #{targetUser.description}
           .col-9.dgidgitalisation-liste.p-3
             if posts
               for  post, i in posts

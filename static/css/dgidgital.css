@@ -1,3 +1,14 @@
+.presentation-title {
+}
+.presentation-userName {
+  font-weight: bolder;
+}
+.presentation-userId {
+  font-weight: bolder;
+}
+.presentation {
+  margin-top:60px;
+}
 .in-black {
   color:#000;
 }
