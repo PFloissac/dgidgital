@@ -11,8 +11,11 @@ block content
         .col-2
           div 
         .col-8.dgidgitalisation-liste
-          h1 Les dernières dgidgi.talisations
-          if lastPosts
-            for  post, i in lastPosts
+          h1 #{title}
+          if posts
+            for  post, i in posts
               include dgidgitalisation.pug
+          if nextPost
+            br
+            a.btn.btn-primary(href='/posts/' + page + '/' + nextPost._id, role='button') Continuer la lecture
               

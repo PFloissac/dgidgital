@@ -255,16 +255,60 @@ app.get('/hashtags/:hashtag', function(req, res) {
     });
 });
 
+var maxInPage = 30;
+
+function getPostsStarting(first) {
+  return new Promise(function (fulfill, reject) {
+    Post.find({_id : {$lte: first}})
+    .limit(maxInPage + 1)
+    .sort({ _id: -1 })
+    .exec()
+    .then(posts => fulfill(posts))
+    .catch(err => reject(err));
+  });
+}
+
 function getLastPosts() {
   return new Promise(function (fulfill, reject) {
     Post.find()
-    .limit(120)
+    .limit(maxInPage + 1)
     .sort({ _id: -1 })
     .exec()
     .then(lastPosts => fulfill(lastPosts))
     .catch(err => reject(err));
   });
 }
+
+app.get('/posts/:page/:first', function(req, res) {
+  var user = req.user;
+  if (!user) {
+    res.redirect('/');
+    return;
+  }
+
+  var page = parseInt(req.params.page);
+  var first = req.params.first;
+  getPostsStarting(first)
+  .then(posts => {
+    var nextPost;
+    if (posts.length > maxInPage) {
+      nextPost = posts[maxInPage];
+      posts.pop();
+    }
+
+    res.render('posts_list_pug', {
+      posts : posts,
+      nextPost : nextPost,
+      title : "Page " + page,
+      page : page + 1
+    });
+  })
+  .catch((err)=>{
+    //winston.info("##### err catchee : " + err);
+    req.flash('success','Une erreur s\'est produite : ' + err);
+    res.render('posts_last_pug');
+  });
+});
 
 app.get('/posts_last', function(req, res) {
   var user = req.user;
@@ -274,10 +318,19 @@ app.get('/posts_last', function(req, res) {
   }
 
  getLastPosts()
-  .then(lastPosts => {
+  .then(posts => {
     //winston.info('/posts_last AVANT render');
-    res.render('posts_last_pug', {
-      lastPosts : lastPosts
+    var nextPost;
+    if (posts.length > maxInPage) {
+      nextPost = posts[maxInPage];
+      posts.pop();
+    }
+
+    res.render('posts_list_pug', {
+      posts : posts,
+      nextPost : nextPost,
+      title : "Les dernières dgidgi.talisations",
+      page : 2
     });
   })
   .catch((err)=>{
