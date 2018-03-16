@@ -167,8 +167,7 @@ router.get('/:targetUserId/avatar/change', function(req, res) {
 function fillUserWithLastPosts(targetUser) {
   return new Promise(function (fulfill, reject) {
     Post.find()
-    .where('userId').equals(targetUser.userId)
-    .limit(50)
+    .or([{ userId: targetUser.userId }, { youGuys: targetUser.userId }])
     .sort({ _id: -1 })
     .exec()
     .then(lastPosts => {
