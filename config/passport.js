@@ -33,6 +33,9 @@ module.exports = function(passport) {
             //winston.info('Utilisateur non trouvé - userId=' + userId);
             return done(null, false, {message:'Utilisateur non trouvé'});
           }
+          if (!user.encPassword) {
+            return done(null, false, {message:'Cet utilisateur est inutilisable (pas de mot de passe dans la BD)'});
+          }
 
           var d1 = CryptoJS.AES.decrypt(user.encPassword, userId).toString(CryptoJS.enc.Utf8);
           var d2 = CryptoJS.AES.decrypt(encPassword, userId).toString(CryptoJS.enc.Utf8);

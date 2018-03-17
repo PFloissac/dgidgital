@@ -5,18 +5,18 @@ div.dgidgitalisation-top-margin
       img.bebe-avatar(src='/users/' + post.userId + '/avatar')
       span.carte-dgidgitaliseur-id @#{post.userId}
     span.carte-dgidgitaliseur-right
-      if  post.youGuys
-        for youGuy, i in post.youGuys
-          span.carte-dgidgitaliseur-youGuy
-            a.btn.btn-sm.btn-primary.rounded(href='/users/' + youGuy, role='button') #{youGuy}
-      if post.hashtags
-        for hashtag, i in post.hashtags
-          span.carte-dgidgitaliseur-hashtag
-            a.btn.btn-sm.btn-secondary.rounded(href='/hashtags/' + hashtag, role='button') ##{hashtag}
+      .span(id='youGuys-hashtags-container-' + post._id)
+        if  post.youGuys
+          for youGuy, i in post.youGuys
+            span.carte-dgidgitaliseur-youGuy
+              a.btn.btn-sm.btn-primary.rounded(href='/users/' + youGuy, role='button') #{youGuy}
+        if post.hashtags
+          for hashtag, i in post.hashtags
+            span.carte-dgidgitaliseur-hashtag
+              a.btn.btn-sm.btn-secondary.rounded(href='/hashtags/' + hashtag, role='button') ##{hashtag}
       span.carte-dgidgitaliseur-date #{post.date}
     .dgidgitalisation-contenu
-      - var splittedContent = post.content;
-      div #{contentHtml} #{post.content}
+      div #{post.content}
       if post.imageId
         img.img-fluid(src='/images/' + post.imageId, data-toggle='modal', data-target='#modal_' + post.imageId)
         .modal.fade(tabindex='-1', role='dialog', id='modal_' + post.imageId)
@@ -28,3 +28,11 @@ div.dgidgitalisation-top-margin
                 img#image.img-fluid(src='/images/' + post.imageId, alt='')
               .modal-footer
                 div.post-content #{post.content}
+      .comments-container-outer
+        .comments-container-inner(id='comments-container-inner-' + post._id)
+          include comments.pug
+        form.comment-form.form-row(action='#' id='CommentForm_' + post.id)
+          .col-11
+            input.comment-form-input.form-control(name='content', type='text' id="CommentForm_content_" + post.id placeholder='Commenter')
+          .col-1
+            input.comment-form-button.btn.btn-dark(type='submit', value='Envoyer', onclick="javascript:sendComment(event,'" + post.id + "');")

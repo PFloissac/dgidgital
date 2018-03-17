@@ -1,0 +1,20 @@
+.span.d-none(id='youGuys-hashtags-replacement-' + post._id)
+  if  post.youGuys
+    for youGuy, i in post.youGuys
+      span.carte-dgidgitaliseur-youGuy
+        a.btn.btn-sm.btn-primary.rounded(href='/users/' + youGuy, role='button') #{youGuy}
+  if post.hashtags
+    for hashtag, i in post.hashtags
+      span.carte-dgidgitaliseur-hashtag
+        a.btn.btn-sm.btn-secondary.rounded(href='/hashtags/' + hashtag, role='button') ##{hashtag}
+
+if post.comments
+  for comment, i in post.comments
+    .comment-root
+      .comment-header
+        a(href='/users/' + comment.userId, style='text-decoration: none;')
+          img.bebe-avatar(src='/users/' + comment.userId + '/avatar')
+          span.carte-dgidgitaliseur-id @#{comment.userId}
+          span.carte-dgidgitaliseur-date(style='margin-left:5px;') #{comment.date}
+      .comment-content #{comment.content}
+  

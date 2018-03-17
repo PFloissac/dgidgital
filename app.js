@@ -26,9 +26,9 @@ var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
     mongoURLLabel = "";
 
-winston.info("port=" + port);
-winston.info("ip=" + ip);
-winston.info("mongoURL=" + mongoURL);
+("port=" + port);
+("ip=" + ip);
+("mongoURL=" + mongoURL);
 
 if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
   var mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
@@ -50,25 +50,25 @@ if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
   }
 }
 
-winston.info("mongoHost=" + mongoHost);
-winston.info("mongoPort=" + mongoPort);
-winston.info("mongoDatabas=" + mongoDatabase);
-winston.info("mongoURL=" + mongoURL);
+("mongoHost=" + mongoHost);
+("mongoPort=" + mongoPort);
+("mongoDatabas=" + mongoDatabase);
+("mongoURL=" + mongoURL);
 
 //if ( process.env.LOCAL_SERVER == 'PFC') {
 //  mongoURL = "mongodb://localhost/dgidgital"
 //}
-winston.info("BIS mongoURL=" + mongoURL);
+("BIS mongoURL=" + mongoURL);
 
 // MongoDB
 // -------
 mongoose.connect(mongoURL); //'mongodb://localhost/dgidgital'
 var db = mongoose.connection;
 db.once('open', function() {
-  winston.info('Connecté à MongoDB');
+  ('Connecté à MongoDB');
 });
 db.on('error', function(err) {
-  winston.info(err);
+  (err);
 });
 
 // initialisation de l'appli
@@ -135,18 +135,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('*', function(req, res, next) {
-  //winston.info('');
-  //winston.info('');
-  //winston.info('>> DEBUG passage dans get *');
-  //winston.info('>> res.req');
-  //winston.info(res.req);
+  //('');
+  //('');
+  //('>> DEBUG passage dans get *');
+  //('>> res.req');
+  //(res.req);
   res.locals.user = req.user || null;
   next();
 });
 
 app.get('*', function(req, res, next) {
-  //winston.info('');
-  //winston.info('suspect [1] next=' + typeof next  + "req.next=" + typeof req.next);
+  //('');
+  //('suspect [1] next=' + typeof next  + "req.next=" + typeof req.next);
   var url = req.url || "";
   if ((url == '/pagecount') || (url.indexOf('/avatar') !== -1)  || (url.indexOf('favicon') !== -1) || (url.indexOf('images') !== -1)) {
     next();
@@ -164,19 +164,19 @@ app.get('*', function(req, res, next) {
     };
     var newLog = new Log(l);
 
-    //winston.info(l);
-    //winston.info("[log] userId=" + userId  + ", url=" + req.url + ", ip=" + req.connection.remoteAddress);
+    //(l);
+    //("[log] userId=" + userId  + ", url=" + req.url + ", ip=" + req.connection.remoteAddress);
     newLog.save(function(err) {
-      //winston.info('suspect [2] next=' + typeof next  + "req.next=" + typeof req.next);
+      //('suspect [2] next=' + typeof next  + "req.next=" + typeof req.next);
       if(err){
-        //winston.info(l);
-        //winston.info("Erreur à la sauvegarde de l\'avatar userId=" + userId + " : " + err);
+        //(l);
+        //("Erreur à la sauvegarde de l\'avatar userId=" + userId + " : " + err);
         next();
       } else {
         next();
       }
     });
-    //winston.info('suspect [3] next=' + typeof next  + "req.next=" + typeof req.next);
+    //('suspect [3] next=' + typeof next  + "req.next=" + typeof req.next);
   }
 });
 
@@ -213,7 +213,7 @@ app.get('/hashtags', function(req, res) {
     if (err) {
       req.flash('success','Une erreur s\'est produite : ' + err);
     }
-    //winston.log(">> hashtags:" + hashtags);
+    //winston.info(">> hashtags:" + hashtags);
     res.render('hashtags_list', {
       hashtags:hashtags
     });
@@ -247,7 +247,7 @@ app.get('/hashtags/:hashtag', function(req, res) {
       });
     })
     .catch((err)=>{
-      //winston.info("##### err catchee : " + err);
+      //("##### err catchee : " + err);
       req.flash('success','Une erreur s\'est produite : ' + err);
       res.render('hashtags_home', {
         hashtag: hashtag
@@ -279,6 +279,97 @@ function getLastPosts() {
   });
 }
 
+function getPostById(postId) {
+  return new Promise(function (fulfill, reject) {
+    Post.findById(postId)
+    .then(post => fulfill(post))
+    .catch(err => reject(err));
+  });
+}
+
+/*
+function updatePost(post) {
+  return new Promise(function (fulfill, reject) {
+    updatedPost.save(function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        fulfill(post);
+      }
+    });
+  });
+}
+*/
+
+app.post('/posts/:postId/comment', function(req, res) {
+  var user = req.user;
+  if (!user) {
+    res.redirect('/');
+    return;
+  }
+
+  var postId = req.params.postId
+
+  var comment = req.body.comment
+
+  winston.info('postId=' + postId + ', comment=' + comment);
+  if (comment && (comment.trim().length > 0)) {
+    getPostById(postId)
+    .then((post)=> {
+      winston.info('>> [DEBUG] 1 debut then');
+      return new Promise(function (fulfill, reject) {
+        winston.info('>> [DEBUG] 2 debut PROMISE');
+
+        var now = dateAndTime.format(new Date(), "YYYY-MM-DD HH:mm:ss");
+        var commentId = new mongoose.Types.ObjectId();
+
+        commentId = new mongoose.Types.ObjectId();
+        var newComment = {
+          _id: commentId,
+          userId: user.userId,
+          postId: postId,
+          date : now,
+          content : comment
+        };
+
+        if (!post.comments) {
+            post.comments = [];
+        }
+        post.comments.push(newComment);
+
+        var hashtagsSet = new Set(post.hashtags.concat(findHashtags(comment)));
+        post.hashtags = Array.from(hashtagsSet);
+
+        var youGuysSet = new Set(post.youGuys.concat(findYouGuys(comment)));
+        post.youGuys = Array.from(youGuysSet);
+
+        winston.info('>> [DEBUG] 3 avant save Post');
+        post.save(function(err) {
+          winston.info('>> [DEBUG] 4 retour save err=' + err);
+          if (err) {
+            reject(err);
+          } else {
+            fulfill(post);
+          }
+        });
+      });
+    })
+    .then((post)=> {
+      winston.info('>> [DEBUG] 5 2eme then');
+      res.render('comments', {
+        post
+      })
+    })
+    .catch((err)=>{
+      winston.info('>> [DEBUG] 6 CATCH err=' + err);
+      res.status(500).send({error: err});
+    });
+  } else {
+    winston.info('>> [DEBUG] 7 no comment');
+    res.status(500).send({error: 'no comment'});
+  }
+});
+
 app.get('/posts/:page/:first', function(req, res) {
   var user = req.user;
   if (!user) {
@@ -304,7 +395,7 @@ app.get('/posts/:page/:first', function(req, res) {
     });
   })
   .catch((err)=>{
-    //winston.info("##### err catchee : " + err);
+    //("##### err catchee : " + err);
     req.flash('success','Une erreur s\'est produite : ' + err);
     res.render('posts_last_pug');
   });
@@ -319,7 +410,7 @@ app.get('/posts_last', function(req, res) {
 
  getLastPosts()
   .then(posts => {
-    //winston.info('/posts_last AVANT render');
+    //('/posts_last AVANT render');
     var nextPost;
     if (posts.length > maxInPage) {
       nextPost = posts[maxInPage];
@@ -334,7 +425,7 @@ app.get('/posts_last', function(req, res) {
     });
   })
   .catch((err)=>{
-    //winston.info("##### err catchee : " + err);
+    //("##### err catchee : " + err);
     req.flash('success','Une erreur s\'est produite : ' + err);
     res.render('posts_last_pug');
   });
@@ -350,16 +441,16 @@ app.get('/images/:imageId', function(req, res) {
   var imageId = req.params.imageId;
   res.contentType("image/jpeg"); //avatar.contentType
 
-  //winston.info("imageId=" + imageId);
+  //("imageId=" + imageId);
   var query = {_i:new mongoose.Types.ObjectId(imageId)}
   Image.findById(imageId, function(err, image) {
     if (err) {
-      winston.info("err=" + err + " pour image " + imageId);
+      ("err=" + err + " pour image " + imageId);
       res.sendStatus(500);
     } else {
       if (image) {
-        //winston.info("TROUVE !!!!");
-        //winston.info(avatar);
+        //("TROUVE !!!!");
+        //(avatar);
         res.send(image.image);
       } else {
         res.sendStatus(404);
@@ -378,10 +469,10 @@ app.get('/posts/add', function(req, res) {
 });
 
 function saveNewPost(newPost) {
-  //winston.info("newPost - AVANT lancement promise");
+  //("newPost - AVANT lancement promise");
   return new Promise(function (fulfill, reject) {
     newPost.save(function(err) {
-      //winston.info("newPost -save err=" + err);
+      //("newPost -save err=" + err);
       if (err) {
         reject(err);
       } else {
@@ -392,14 +483,14 @@ function saveNewPost(newPost) {
 }
 
 function saveNewImage(newImage) {
-  //winston.info("newImage - AVANT lancement promise");
+  //("newImage - AVANT lancement promise");
   return new Promise(function (fulfill, reject) {
     if (!newImage) {
-      //winston.info("newImage RIEN A FAIRE");
+      //("newImage RIEN A FAIRE");
       fulfill();
     } else {
       newImage.save(function(err) {
-        //winston.info("newImage -save err=" + err);
+        //("newImage -save err=" + err);
         if (err) {
           reject(err);
         } else {
@@ -422,15 +513,15 @@ function findYouGuys(searchText) {
 }
 
 function findHashtags(searchText) {
-    //winston.info("find dans " + searchText);
+    //("find dans " + searchText);
     var regexp = /#[A-zÀ-ú_-]+/g
     result = searchText.match(regexp);
     if (result) {
         result = result.map(function(s){ return s.trim().toLowerCase().substr(1);});
-        //winston.info(result);
+        //(result);
         return result;
     } else {
-        //winston.info("pas result");
+        //("pas result");
         return [];
     }
 }
@@ -446,7 +537,7 @@ app.post('/posts/add', function(req, res) {
   if (req.files && req.files.fileUpload && req.files.fileUpload.data) {
     hasImage = true;
   }
-  winston.info("hasImage:" + hasImage);
+  ("hasImage:" + hasImage);
 
   var now = dateAndTime.format(new Date(), "YYYY-MM-DD HH:mm:ss");
   var postId = new mongoose.Types.ObjectId();
@@ -474,33 +565,33 @@ app.post('/posts/add', function(req, res) {
   newPost.content = req.body.content;
 
   var hashtags = findHashtags(req.body.content);
-  //winston.info("hashtags: " + hashtags);
+  //("hashtags: " + hashtags);
   newPost.hashtags = hashtags;
 
   var youGuys = findYouGuys(req.body.content);
-  winston.info("youGuys: " + youGuys);
+  ("youGuys: " + youGuys);
   newPost.youGuys = youGuys;
 
   saveNewPost(newPost)
   .then(saveNewImage(newImage))
   .then(()=> {
-    //winston.info("##### OKKKKKK : ");
+    //("##### OKKKKKK : ");
     res.redirect('/users/' + user.userId);
   })
   .catch((err)=>{
-    //winston.info("##### err catchee : " + err);
+    //("##### err catchee : " + err);
     req.flash('success','Une erreur s\'est produite : ' + err);
     res.redirect('/users/' + user.userId);
   });
 });
 
 app.get('/auth', passport.authenticate('local'), function(req, res){
-  winston.info("passport user", req.user);
+  ("passport user", req.user);
 });
 
 /*
 app.use(function printSession(req, res, next) {
-  winston.info('[printSession] req.session', req.session);
+  ('[printSession] req.session', req.session);
   return next();
 });
 */
@@ -576,7 +667,7 @@ app.post('/register', function(req, res) {
             description:description
           });
         } else {
-          winston.info("Création de l\'utilisateur " + userId);
+          ("Création de l\'utilisateur " + userId);
 
           var newUser = new User({
             _id: new mongoose.Types.ObjectId(),
@@ -590,7 +681,7 @@ app.post('/register', function(req, res) {
 
           newUser.save(function(err){
             if(err){
-              winston.info("Erreur à la création de l\'utilisateur " + userId + " : " + err);
+              ("Erreur à la création de l\'utilisateur " + userId + " : " + err);
               res.render('register', {
                 errors : [{location:"body", param:"userId", msg:"Une erreur s'est produite : " + err}],
                 magic:magic,
@@ -637,8 +728,8 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', function(req, res, next) {
-  winston.info('DEBUG /login Firefox ');
-  winston.info(req.body);
+  ('DEBUG /login Firefox ');
+  (req.body);
   var successRedirect = "/users/" + req.body.userId;
   passport.authenticate('local', {
     successRedirect: successRedirect,
@@ -659,5 +750,5 @@ app.get('/logout', function(req, res) {
 // start server
 // ------------
 app.listen(port, ip, function() {
-  winston.info('Serveur started ...');
+  ('Serveur started ...');
 });
