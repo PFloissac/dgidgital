@@ -27,22 +27,25 @@ html(class = bodyClass)
               a.nav-link(href='/hashtags') Hashtags
             li.nav-item
               a.nav-link(href='/posts_last') Dgidgi.talisations
-            li.nav-item
-              a.nav-link(href='/posts/add') A vos claviers
+            if !siteClosed
+              li.nav-item
+                a.nav-link(href='/posts/add') A vos claviers
         ul.navbar-nav.ml-auto
           if user
             li.nav-item.dropdown
               a#navbarDropdown.nav-link.dropdown-toggle(href='#', role='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                 | #{user.userId}
               .dropdown-menu.dropdown-menu-right(aria-labelledby='navbarDropdown')
-                a.dropdown-item(href='/users/' +user.userId + '/avatar/change') Avatar
-                .dropdown-divider
+                if !siteClosed
+                  a.dropdown-item(href='/users/' +user.userId + '/avatar/change') Avatar
+                  .dropdown-divider
                 a.dropdown-item(href='/logout') Déconnexion
           else
             li.nav-item
               a.nav-link(href='/login') S'identifier
-            li.nav-item
-              a.nav-link(href='/register') Nous rejoindre 
+            if !siteClosed
+              li.nav-item
+                a.nav-link(href='/register') Nous rejoindre 
     
     block specific_layout
       .container-fluid#au-dessous-de-nav

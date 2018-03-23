@@ -21,6 +21,8 @@ const console = new winston.transports.Console();
 winston.add(console);
 winston.add(files);
 
+var siteClosed = true;
+
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
     mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
@@ -145,6 +147,9 @@ app.get('*', function(req, res, next) {
 });
 
 app.get('*', function(req, res, next) {
+
+  res.locals.siteClosed = siteClosed;
+
   //('');
   //('suspect [1] next=' + typeof next  + "req.next=" + typeof req.next);
   var url = req.url || "";

@@ -4,22 +4,23 @@ block title
   title Dgidgi.tal
 
 block content
-  #msgModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='msgModalLabel', aria-hidden='true')
-    .modal-dialog(role='document')
-      .modal-content
-        .modal-header
-          h5#msgModalLabel.modal-title
-          button.close(type='button', data-dismiss='modal', aria-label='Close')
-            span(aria-hidden='true') ×
-        .modal-body
-          | Suite à une demande de Guillaume, le site reste ouvert jusqu'à vendredi prochain (23/03) 7h00.
-          br
-          br
-          | Vous pouvez donc encore vous inscrire ou poster des messages.
-          br
-          | (et vous pouvez maintenant également laisser des commentaires)
-        .modal-footer
-          button.btn.btn-secondary(type='button', data-dismiss='modal') Fermer
+  if !siteClosed
+    #msgModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='msgModalLabel', aria-hidden='true')
+      .modal-dialog(role='document')
+        .modal-content
+          .modal-header
+            h5#msgModalLabel.modal-title
+            button.close(type='button', data-dismiss='modal', aria-label='Close')
+              span(aria-hidden='true') ×
+          .modal-body
+            | Suite à une demande de Guillaume, le site reste ouvert jusqu'à vendredi prochain (23/03) 7h00.
+            br
+            br
+            | Vous pouvez donc encore vous inscrire ou poster des messages.
+            br
+            | (et vous pouvez maintenant également laisser des commentaires)
+          .modal-footer
+            button.btn.btn-secondary(type='button', data-dismiss='modal') Fermer
   .cover-container 
     br
     br
@@ -37,7 +38,8 @@ block content
           div Découvrez ce que les autres ont dgidgi.talisé
           br
         p.lead
-          a.btn.btn-lg.btn-secondary(href='/register') Nous rejoindre
+          if !siteClosed
+            a.btn.btn-lg.btn-secondary(href='/register') Nous rejoindre
 
           
 block specific_script

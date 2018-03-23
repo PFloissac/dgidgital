@@ -4,22 +4,23 @@ block title
   title Changez d'avatar - Dgidgi.tal
 
 block content
-  #login-debut-content 
-    h1 Sélectionnez votre avatar
-    br
-    div L'image doit être carrée (ou presque), sinon vous allez avoir une drôle de tête.
-    div Vous pouvez utiliser par exemple 
-      a(href='https://imageresize.org/', target='_blank') https://imageresize.org/
-      | pour la préparer (option crop - taille 1:1) 
-
-    br
-    form(method='POST', action='/users/' +user.userId + '/avatar/change' id='AvatarForm' enctype='multipart/form-data')
-      #form-group
-        label Fichier (max 70 Ko) :
-        input.form-control(name='fileUpload', type='file' id="AvatarForm_fileUpload")
+  if !siteClosed
+    #login-debut-content 
+      h1 Sélectionnez votre avatar
       br
-      input.btn.btn-primary(type='submit', value='Uploader l\'avatar')
-    img#image-holder
+      div L'image doit être carrée (ou presque), sinon vous allez avoir une drôle de tête.
+      div Vous pouvez utiliser par exemple 
+        a(href='https://imageresize.org/', target='_blank') https://imageresize.org/
+        | pour la préparer (option crop - taille 1:1) 
+
+      br
+      form(method='POST', action='/users/' +user.userId + '/avatar/change' id='AvatarForm' enctype='multipart/form-data')
+        #form-group
+          label Fichier (max 70 Ko) :
+          input.form-control(name='fileUpload', type='file' id="AvatarForm_fileUpload")
+        br
+        input.btn.btn-primary(type='submit', value='Uploader l\'avatar')
+      img#image-holder
 
 block specific_script
   script.

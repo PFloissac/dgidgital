@@ -31,8 +31,9 @@ div.dgidgitalisation-top-margin
       .comments-container-outer
         .comments-container-inner(id='comments-container-inner-' + post._id)
           include comments.pug
-        form.comment-form.form-row(action='#' id='CommentForm_' + post.id)
-          .col-11
-            input.comment-form-input.form-control(name='content', type='text' id="CommentForm_content_" + post.id placeholder='Commenter')
-          .col-1
-            input.comment-form-button.btn.btn-dark(type='submit', value='Envoyer', onclick="javascript:sendComment(event,'" + post.id + "');")
+        if !siteClosed
+          form.comment-form.form-row(action='#' id='CommentForm_' + post.id)
+            .col-11
+              input.comment-form-input.form-control(name='content', type='text' id="CommentForm_content_" + post.id placeholder='Commenter')
+            .col-1
+              input.comment-form-button.btn.btn-dark(type='submit', value='Envoyer', onclick="javascript:sendComment(event,'" + post.id + "');")

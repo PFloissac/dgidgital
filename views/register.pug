@@ -4,48 +4,49 @@ block title
   title Enregistrez-vous - Dgidgi.tal
 
 block content
-  #register-debut-content
-    .container-fluid
-      .row
-        .col-1
-          div
-        .col-10
-          h1 Enregistrez-vous
-          form(method='POST', action='/register' id='RegisterForm')
-            #form-group
-              label Le mot magique * :
-                span.form-comment (reçu par mail)
-              input.form-control(name='magic', type='text' id="RegisterForm_magic" value=magic)
-            br
-            hr
-            br
-            #form-group
-              label Identifiant * :
-                span.form-comment au minimum un trigramme. Il peut contenir des caractères minuscules, des chiffres ou _ 
-              input.form-control(name='userId', type='text' id="RegisterForm_userId" value=userId)
-            #form-group
-              label nom/prénom * :
-              input.form-control(name='userName', type='text' id="RegisterForm_userName" value=userName)
-            #form-group
-              label Email * :
-              span.form-comment si vous créez un compte "fake", mettez quand même une vrai adresse email pour que Guillaume sache qui vous êtes  
-              input.form-control(name='email', type='text' id="RegisterForm_email" value=email)
-            #form-group
-              label Mot de passe * : 
-                span.form-comment pas un de vos vrais mots de passe
-              input.form-control(name='password', type='password' id="RegisterForm_password")
-            #form-group
-              label Confirmez votre mot de passe * :
-              input.form-control(name='password2', type='password' id="RegisterForm_password2")
-            #form-group
-              div
-                label  Décrivez vous (500 caractères max):
-                span.nb_char_restants#description_nb_char_restants
-              textarea.form-control(name='description' ,maxlength='500' id="RegisterForm_description")= description
-            input.form-control(name='encPassword', type='hidden' value='' id="RegisterForm_encPassword")
-            input.form-control(name='encPassword2', type='hidden' value='' id="RegisterForm_encPassword2")
-            br
-            input.btn.btn-primary(type='submit', value='Créer le compte')
+  if !siteClosed
+    #register-debut-content
+      .container-fluid
+        .row
+          .col-1
+            div
+          .col-10
+            h1 Enregistrez-vous
+            form(method='POST', action='/register' id='RegisterForm')
+              #form-group
+                label Le mot magique * :
+                  span.form-comment (reçu par mail)
+                input.form-control(name='magic', type='text' id="RegisterForm_magic" value=magic)
+              br
+              hr
+              br
+              #form-group
+                label Identifiant * :
+                  span.form-comment au minimum un trigramme. Il peut contenir des caractères minuscules, des chiffres ou _ 
+                input.form-control(name='userId', type='text' id="RegisterForm_userId" value=userId)
+              #form-group
+                label nom/prénom * :
+                input.form-control(name='userName', type='text' id="RegisterForm_userName" value=userName)
+              #form-group
+                label Email * :
+                span.form-comment si vous créez un compte "fake", mettez quand même une vrai adresse email pour que Guillaume sache qui vous êtes  
+                input.form-control(name='email', type='text' id="RegisterForm_email" value=email)
+              #form-group
+                label Mot de passe * : 
+                  span.form-comment pas un de vos vrais mots de passe
+                input.form-control(name='password', type='password' id="RegisterForm_password")
+              #form-group
+                label Confirmez votre mot de passe * :
+                input.form-control(name='password2', type='password' id="RegisterForm_password2")
+              #form-group
+                div
+                  label  Décrivez vous (500 caractères max):
+                  span.nb_char_restants#description_nb_char_restants
+                textarea.form-control(name='description' ,maxlength='500' id="RegisterForm_description")= description
+              input.form-control(name='encPassword', type='hidden' value='' id="RegisterForm_encPassword")
+              input.form-control(name='encPassword2', type='hidden' value='' id="RegisterForm_encPassword2")
+              br
+              input.btn.btn-primary(type='submit', value='Créer le compte')
 
 block specific_script
   script.
